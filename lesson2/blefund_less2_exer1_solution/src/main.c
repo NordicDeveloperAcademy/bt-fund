@@ -10,7 +10,6 @@
 /* STEP 3 - Include the header file of the Bluetooth LE stack */
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/gap.h>
-#include <zephyr/bluetooth/uuid.h>
 
 #include <dk_buttons_and_leds.h>
 
