@@ -7,18 +7,20 @@
 
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
-/* STEP 3 - Include the header file of the Bluetooth LE stack */
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/gap.h>
 #include <zephyr/bluetooth/uuid.h>
-
 #include <dk_buttons_and_leds.h>
+
+/* STEP X -  */
 #define COMPANY_CODE            0x0059
+/* STEP X -   */
 typedef struct adv_mfg_data {
 	uint16_t company_code;	    /* Company Identifier Code. */
 	uint16_t number_press;   
 } adv_mfg_data_type;
 #define USER_BUTTON             DK_BTN1_MSK
+/* STEP X -   */
 static adv_mfg_data_type adv_mfg_data = {COMPANY_CODE,0x00};
 static unsigned char url_data[] ={0x17,'/','/','a','c','a','d','e','m','y','.','n','o','r','d','i','c','s','e','m','i','.','c','o','m'};
 LOG_MODULE_REGISTER(Lesson2_Exercise1, LOG_LEVEL_INF);
@@ -28,12 +30,11 @@ LOG_MODULE_REGISTER(Lesson2_Exercise1, LOG_LEVEL_INF);
 
 #define RUN_STATUS_LED          DK_LED1
 #define RUN_LED_BLINK_INTERVAL  1000
-/* STEP 4.1 - Declare the advertising packet */
+
 static const struct bt_data ad[] = {
-	/* STEP 4.1.1 - Set the advertising flags */
 	BT_DATA_BYTES(BT_DATA_FLAGS, BT_LE_AD_NO_BREDR),
-	/* STEP 4.1.2 - Set the advertising data  */
 	BT_DATA(BT_DATA_NAME_COMPLETE, DEVICE_NAME, DEVICE_NAME_LEN),
+	/* STEP X -  */
 	BT_DATA(BT_DATA_MANUFACTURER_DATA,(unsigned char *)&adv_mfg_data, sizeof(adv_mfg_data)),
 
 };
@@ -41,7 +42,7 @@ static const struct bt_data ad[] = {
 static const struct bt_data sd[] = {
 	BT_DATA(BT_DATA_URI, url_data,sizeof(url_data)),
 };
-
+/* STEP X -  */
 static void button_changed(uint32_t button_state, uint32_t has_changed)
 {
 	if (has_changed & button_state & USER_BUTTON) {
@@ -50,7 +51,7 @@ static void button_changed(uint32_t button_state, uint32_t has_changed)
 			      sd, ARRAY_SIZE(sd));
 	}
 }
-
+/* STEP X -   */
 static int init_button(void)
 {
 	int err;
@@ -74,6 +75,7 @@ void main(void)
 		LOG_ERR("LEDs init failed (err %d)\n", err);
 		return;
 	}
+	/* STEP X -   */
 	err = init_button();
 	if (err) {
 		printk("Button init failed (err %d)\n", err);
