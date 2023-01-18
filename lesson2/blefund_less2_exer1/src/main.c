@@ -41,16 +41,11 @@ void main(void)
 		LOG_ERR("LEDs init failed (err %d)\n", err);
 		return;
 	}
+    /* STEP 5 - Enable the Bluetooth LE stack */
 
-	err = bt_enable(NULL);
-	if (err) {
-		LOG_ERR("Bluetooth init failed (err %d)\n", err);
-		return;
-	}
 
-	LOG_INF("Bluetooth initialized\n");
 	
-	/* STEP 5 - Start advertising */
+	/* STEP 6 - Start advertising */
 
 
 	LOG_INF("Advertising successfully started\n");

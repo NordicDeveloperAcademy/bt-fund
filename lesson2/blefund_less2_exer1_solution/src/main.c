@@ -53,7 +53,7 @@ void main(void)
 		LOG_ERR("LEDs init failed (err %d)\n", err);
 		return;
 	}
-
+	/* STEP 5 - Enable the Bluetooth LE stack */
 	err = bt_enable(NULL);
 	if (err) {
 		LOG_ERR("Bluetooth init failed (err %d)\n", err);
@@ -62,7 +62,7 @@ void main(void)
 
 	LOG_INF("Bluetooth initialized\n");
 	
-	/* STEP 5 - Start advertising */
+	/* STEP 6 - Start advertising */
 	err = bt_le_adv_start(BT_LE_ADV_NCONN, ad, ARRAY_SIZE(ad),
 			      sd, ARRAY_SIZE(sd));
 	if (err) {
