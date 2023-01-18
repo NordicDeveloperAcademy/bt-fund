@@ -20,10 +20,18 @@ typedef struct adv_mfg_data {
 	uint16_t number_press;   
 } adv_mfg_data_type;
 #define USER_BUTTON             DK_BTN1_MSK
+
+/* STEP X - */
+struct bt_le_adv_param *adv_param =
+	BT_LE_ADV_PARAM(BT_LE_ADV_OPT_NONE,
+	800,
+	801,
+	NULL);
+
 /* STEP X -   */
 static adv_mfg_data_type adv_mfg_data = {COMPANY_CODE,0x00};
 static unsigned char url_data[] ={0x17,'/','/','a','c','a','d','e','m','y','.','n','o','r','d','i','c','s','e','m','i','.','c','o','m'};
-LOG_MODULE_REGISTER(Lesson2_Exercise1, LOG_LEVEL_INF);
+LOG_MODULE_REGISTER(Lesson2_Exercise2, LOG_LEVEL_INF);
 
 #define DEVICE_NAME             CONFIG_BT_DEVICE_NAME
 #define DEVICE_NAME_LEN         (sizeof(DEVICE_NAME) - 1)
@@ -81,6 +89,7 @@ void main(void)
 		printk("Button init failed (err %d)\n", err);
 		return;
 	}
+
 	err = bt_enable(NULL);
 	if (err) {
 		LOG_ERR("Bluetooth init failed (err %d)\n", err);
@@ -89,7 +98,7 @@ void main(void)
 
 	LOG_INF("Bluetooth initialized\n");
 
-	err = bt_le_adv_start(BT_LE_ADV_NCONN, ad, ARRAY_SIZE(ad),
+	err = bt_le_adv_start(adv_param, ad, ARRAY_SIZE(ad),
 			      sd, ARRAY_SIZE(sd));
 	if (err) {
 		LOG_ERR("Advertising failed to start (err %d)\n", err);
