@@ -15,7 +15,6 @@
 
 #include <dk_buttons_and_leds.h>
 
-#define USER_BUTTON             DK_BTN1_MSK
 
 /* STEP 5.1 - Create the advertising parameter for connectable advertising */
 

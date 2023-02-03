@@ -16,7 +16,6 @@
 
 #include <dk_buttons_and_leds.h>
 
-#define USER_BUTTON             DK_BTN1_MSK
 
 /* STEP 5.1 - Create the advertising parameter for connectable advertising */
 static struct bt_le_adv_param *adv_param = BT_LE_ADV_PARAM((BT_LE_ADV_OPT_CONNECTABLE|BT_LE_ADV_OPT_USE_IDENTITY), /* Connectable advertising and use identity address */
