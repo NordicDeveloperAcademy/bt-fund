@@ -44,7 +44,7 @@ typedef void (*led_cb_t)(const bool led_state);
 typedef bool (*button_cb_t)(void);
 
 /** @brief Callback struct used by the LBS Service. */
-struct bt_lbs_cb {
+struct my_lbs_cb {
 	/** LED state change callback. */
 	led_cb_t    led_cb;
 	/** Button read callback. */
@@ -68,7 +68,7 @@ struct bt_lbs_cb {
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int my_lbs_init(struct bt_lbs_cb *callbacks);
+int my_lbs_init(struct my_lbs_cb *callbacks);
 
 
 #ifdef __cplusplus

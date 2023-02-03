@@ -30,7 +30,7 @@ LOG_MODULE_DECLARE(Lesson4_Exercise1);
 
 
 static bool                   button_state;
-static struct bt_lbs_cb       lbs_cb;
+static struct my_lbs_cb       lbs_cb;
 
 /* STEP X - */
 static ssize_t write_led(struct bt_conn *conn,
@@ -89,7 +89,7 @@ static ssize_t read_button(struct bt_conn *conn,
 
 /* LED Button Service Declaration */
 /* STEP X - */
-BT_GATT_SERVICE_DEFINE(lbs_svc,
+BT_GATT_SERVICE_DEFINE(my_lbs_svc,
 BT_GATT_PRIMARY_SERVICE(BT_UUID_LBS),
 /* STEP X - */
 	BT_GATT_CHARACTERISTIC(BT_UUID_LBS_BUTTON,
@@ -104,7 +104,7 @@ BT_GATT_PRIMARY_SERVICE(BT_UUID_LBS),
  
 );
 /* STEP X - */
-int my_lbs_init(struct bt_lbs_cb *callbacks)
+int my_lbs_init(struct my_lbs_cb *callbacks)
 {
 	if (callbacks) {
 		lbs_cb.led_cb    = callbacks->led_cb;

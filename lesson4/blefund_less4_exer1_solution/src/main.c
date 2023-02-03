@@ -60,7 +60,7 @@ static bool app_button_cb(void)
 }
 
 /* STEP X - */
-static struct bt_lbs_cb lbs_callbacs = {
+static struct my_lbs_cb lbs_callbacs = {
 	.led_cb    = app_led_cb,
 	.button_cb = app_button_cb,
 };
