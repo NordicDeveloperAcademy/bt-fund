@@ -14,10 +14,8 @@
 
 
 #include <dk_buttons_and_leds.h>
-
+/* STEP X */
 #include "my_lbs.h"
-
-#define USER_BUTTON             DK_BTN1_MSK
 
 static struct bt_le_adv_param *adv_param = BT_LE_ADV_PARAM((BT_LE_ADV_OPT_CONNECTABLE|BT_LE_ADV_OPT_USE_IDENTITY), /* Connectable advertising and use identity address */
                 800, /*Min Advertising Interval 500ms (800*0.625ms) */
@@ -25,14 +23,19 @@ static struct bt_le_adv_param *adv_param = BT_LE_ADV_PARAM((BT_LE_ADV_OPT_CONNEC
                 NULL); /* Set to NULL for undirected advertising*/
 
 
-LOG_MODULE_REGISTER(Lesson4_Exercise1, LOG_LEVEL_DBG);
+LOG_MODULE_REGISTER(Lesson4_Exercise1, LOG_LEVEL_INF);
 
 #define DEVICE_NAME             CONFIG_BT_DEVICE_NAME
 #define DEVICE_NAME_LEN         (sizeof(DEVICE_NAME) - 1)
 
 #define RUN_STATUS_LED          DK_LED1
 #define CON_STATUS_LED          DK_LED2
+/* STEP X - */
 #define USER_LED                DK_LED3
+
+/* STEP X - */
+#define USER_BUTTON             DK_BTN1_MSK
+
 #define RUN_LED_BLINK_INTERVAL  1000
 
 static bool app_button_state;
@@ -60,7 +63,7 @@ static bool app_button_cb(void)
 }
 
 /* STEP X - */
-static struct my_lbs_cb lbs_callbacs = {
+static struct my_lbs_cb app_callbacks = {
 	.led_cb    = app_led_cb,
 	.button_cb = app_button_cb,
 };
@@ -135,7 +138,7 @@ void main(void)
     bt_conn_cb_register(&connection_callbacks);
 
 	/* STEP X - */
-	err = my_lbs_init(&lbs_callbacs);
+	err = my_lbs_init(&app_callbacks);
 	if (err) {
 		printk("Failed to init LBS (err:%d)\n", err);
 		return;
