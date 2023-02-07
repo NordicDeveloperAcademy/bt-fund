@@ -19,7 +19,7 @@ extern "C" {
 
 #include <zephyr/types.h>
 
-/* STEP X-  */
+/* STEP 1 - Define the 128 bit UUIDs for the GATT service and its characteristics in */
 /** @brief LBS Service UUID. */
 #define BT_UUID_LBS_VAL \
 	BT_UUID_128_ENCODE(0x00001523, 0x1212, 0xefde, 0x1523, 0x785feabcd123)
@@ -53,12 +53,8 @@ struct my_lbs_cb {
 
 /** @brief Initialize the LBS Service.
  *
- * This function registers a GATT service with two characteristics: Button
- * and LED.
- * Send notifications for the Button Characteristic to let connected peers know
- * when the button state changes.
- * Write to the LED Characteristic to change the state of the LED on the
- * board.
+ * This function registers application callback functions with the My LBS
+ * Service 
  *
  * @param[in] callbacks Struct containing pointers to callback functions
  *			used by the service. This pointer can be NULL

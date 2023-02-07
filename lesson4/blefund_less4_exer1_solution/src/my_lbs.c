@@ -32,7 +32,7 @@ LOG_MODULE_DECLARE(Lesson4_Exercise1);
 static bool                   button_state;
 static struct my_lbs_cb       lbs_cb;
 
-/* STEP X - */
+/* STEP 6 - Implement the write callback function of the LED characteristic */
 static ssize_t write_led(struct bt_conn *conn,
 			 const struct bt_gatt_attr *attr,
 			 const void *buf,
@@ -67,7 +67,7 @@ static ssize_t write_led(struct bt_conn *conn,
 	return len;
 }
 
-/* STEP X - */
+/* STEP 5 - Implement the read callback function of the Button characteristic*/
 static ssize_t read_button(struct bt_conn *conn,
 			  const struct bt_gatt_attr *attr,
 			  void *buf,
@@ -92,15 +92,15 @@ static ssize_t read_button(struct bt_conn *conn,
 
 
 /* LED Button Service Declaration */
-/* STEP X - */
+/* STEP 2 - Create and add the MY LBS service to the Bluetooth LE stack */
 BT_GATT_SERVICE_DEFINE(my_lbs_svc,
 BT_GATT_PRIMARY_SERVICE(BT_UUID_LBS),
-/* STEP X - */
+/* STEP 3 - Create and add the Button characteristic */
 	BT_GATT_CHARACTERISTIC(BT_UUID_LBS_BUTTON,
 			       BT_GATT_CHRC_READ ,
 			       BT_GATT_PERM_READ, read_button, NULL,
 			       &button_state),
-/* STEP X - */
+/* STEP 4 - Create and add the LED characteristic. */
 	BT_GATT_CHARACTERISTIC(BT_UUID_LBS_LED,
 			       BT_GATT_CHRC_WRITE,
 			       BT_GATT_PERM_WRITE,
