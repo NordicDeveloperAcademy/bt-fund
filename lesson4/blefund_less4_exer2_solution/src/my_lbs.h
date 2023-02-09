@@ -65,6 +65,17 @@ struct my_lbs_cb {
  */
 int my_lbs_init(struct my_lbs_cb *callbacks);
 
+/** @brief Send the button state.
+ *
+ * This function sends a binary state, typically the state of a
+ * button, to all connected peers.
+ *
+ * @param[in] button_state The state of the button.
+ *
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int my_lbs_send_button_state(bool button_state);
 
 #ifdef __cplusplus
 }
