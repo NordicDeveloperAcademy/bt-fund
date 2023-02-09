@@ -132,7 +132,7 @@ int my_lbs_send_button_state(bool button_state)
 		return -EACCES;
 	}
 
-	return bt_gatt_notify(NULL, &my_lbs_svc.attrs[4],
+	return bt_gatt_notify(NULL, &my_lbs_svc.attrs[2],
 			      &button_state,
 			      sizeof(button_state));
 }
