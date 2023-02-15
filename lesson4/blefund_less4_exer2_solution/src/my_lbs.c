@@ -32,14 +32,14 @@ static bool                   indicate_enabled;
 static bool                   button_state;
 static struct my_lbs_cb       lbs_cb;
 
-/* STEP X - */
+/* STEP 4 - Define an indication parameter */
 static struct bt_gatt_indicate_params ind_params;
 
-/* STEP X - */
+/* STEP 3 - Implement the configuration change callback function */
 static void mylbsbc_ccc_cfg_changed(const struct bt_gatt_attr *attr,
 				  uint16_t value)
 {
-	/* STEP X -  */
+	/* STEP 12 - Change the configuration change callback function to detect enabling/disabling notifications  */
 	notify_enabled = (value == BT_GATT_CCC_NOTIFY);
 }
 
@@ -103,13 +103,13 @@ static ssize_t read_button(struct bt_conn *conn,
 /* LED Button Service Declaration */
 BT_GATT_SERVICE_DEFINE(my_lbs_svc,
 BT_GATT_PRIMARY_SERVICE(BT_UUID_LBS),
-/* STEP X -  */
-/* STEP X -  */
+/* STEP 1 - Modify the Button characteristic declaration to support indication */
+/* STEP 11 - Change BT_GATT_CHRC_INDICATE to BT_GATT_CHRC_NOTIFY */
 	BT_GATT_CHARACTERISTIC(BT_UUID_LBS_BUTTON,
 			       BT_GATT_CHRC_READ | BT_GATT_CHRC_NOTIFY,
 			       BT_GATT_PERM_READ, read_button, NULL,
 			       &button_state),
-/* STEP X -  */
+/* STEP 2 - Create and add the Client Characteristic Configuration Descriptor */
 	BT_GATT_CCC(mylbsbc_ccc_cfg_changed,
 		    BT_GATT_PERM_READ | BT_GATT_PERM_WRITE),
 
@@ -130,7 +130,7 @@ int my_lbs_init(struct my_lbs_cb *callbacks)
 	return 0;
 }
 
-/* STEP X -  */
+/* STEP 5 - Define the function to send indications */
 int my_lbs_send_button_state_indicate(bool button_state)
 {
 	if (!indicate_enabled) {
@@ -144,7 +144,7 @@ int my_lbs_send_button_state_indicate(bool button_state)
 	return bt_gatt_indicate(NULL, &ind_params);
 }
 
-/* STEP X -  */
+/* STEP 13 - Define the function to send notifications */
 int my_lbs_send_button_state_notify(bool button_state)
 {
 	if (!notify_enabled) {
