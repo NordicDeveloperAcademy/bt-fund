@@ -26,16 +26,20 @@
 
 LOG_MODULE_DECLARE(Lesson4_Exercise2);
 
-/* STEP X - */
-static bool                   notify_enabled;
 
+static bool                   notify_enabled;
+static bool                   indicate_enabled;
 static bool                   button_state;
 static struct my_lbs_cb       lbs_cb;
 
 /* STEP X - */
-static void lbslc_ccc_cfg_changed(const struct bt_gatt_attr *attr,
+static struct bt_gatt_indicate_params ind_params;
+
+/* STEP X - */
+static void mylbsbc_ccc_cfg_changed(const struct bt_gatt_attr *attr,
 				  uint16_t value)
 {
+	/* STEP X -  */
 	notify_enabled = (value == BT_GATT_CCC_NOTIFY);
 }
 
@@ -100,12 +104,13 @@ static ssize_t read_button(struct bt_conn *conn,
 BT_GATT_SERVICE_DEFINE(my_lbs_svc,
 BT_GATT_PRIMARY_SERVICE(BT_UUID_LBS),
 /* STEP X -  */
+/* STEP X -  */
 	BT_GATT_CHARACTERISTIC(BT_UUID_LBS_BUTTON,
-			       BT_GATT_CHRC_READ | BT_GATT_CHRC_NOTIFY ,
+			       BT_GATT_CHRC_READ | BT_GATT_CHRC_NOTIFY,
 			       BT_GATT_PERM_READ, read_button, NULL,
 			       &button_state),
 /* STEP X -  */
-	BT_GATT_CCC(lbslc_ccc_cfg_changed,
+	BT_GATT_CCC(mylbsbc_ccc_cfg_changed,
 		    BT_GATT_PERM_READ | BT_GATT_PERM_WRITE),
 
 	BT_GATT_CHARACTERISTIC(BT_UUID_LBS_LED,
@@ -126,7 +131,21 @@ int my_lbs_init(struct my_lbs_cb *callbacks)
 }
 
 /* STEP X -  */
-int my_lbs_send_button_state(bool button_state)
+int my_lbs_send_button_state_indicate(bool button_state)
+{
+	if (!indicate_enabled) {
+		return -EACCES;
+	}
+	ind_params.attr = &my_lbs_svc.attrs[2];
+	ind_params.func = NULL;
+	ind_params.destroy = NULL;
+	ind_params.data = &button_state;
+	ind_params.len = sizeof(button_state);
+	return bt_gatt_indicate(NULL, &ind_params);
+}
+
+/* STEP X -  */
+int my_lbs_send_button_state_notify(bool button_state)
 {
 	if (!notify_enabled) {
 		return -EACCES;
