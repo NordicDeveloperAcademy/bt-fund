@@ -50,7 +50,6 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME);
 #define KEY_PASSKEY_ACCEPT DK_BTN1_MSK
 #define KEY_PASSKEY_REJECT DK_BTN2_MSK
 
-#define UART_BUF_SIZE CONFIG_BT_NUS_UART_BUFFER_SIZE
 #define UART_WAIT_FOR_BUF_DELAY K_MSEC(50)
 #define UART_WAIT_FOR_RX CONFIG_BT_NUS_UART_RX_WAIT_TIME
 
@@ -61,14 +60,15 @@ static struct bt_conn *auth_conn;
 
 static const struct device *uart = DEVICE_DT_GET(DT_CHOSEN(nordic_nus_uart));
 static struct k_work_delayable uart_work;
-
+/* STEP X - */
 struct uart_data_t {
 	void *fifo_reserved;
-	uint8_t data[UART_BUF_SIZE];
+	uint8_t data[CONFIG_BT_NUS_UART_BUFFER_SIZE];
 	uint16_t len;
 };
 
-static K_FIFO_DEFINE(fifo_uart_tx_data);
+/*STEP X -  */
+static K_FIFO_DEFINE(fifo_uart_tx_data); 
 static K_FIFO_DEFINE(fifo_uart_rx_data);
 
 static const struct bt_data ad[] = {
@@ -179,6 +179,7 @@ static void uart_cb(const struct device *dev, struct uart_event *evt, void *user
 				   data);
 
 		if (buf->len > 0) {
+			/* STEP X - */
 			k_fifo_put(&fifo_uart_rx_data, buf);
 		} else {
 			k_free(buf);
@@ -310,13 +311,13 @@ static int uart_init(void)
 	} else {
 		return -ENOMEM;
 	}
-
+	// Send a welcome message over UART 
 	err = uart_tx(uart, tx->data, tx->len, SYS_FOREVER_MS);
 	if (err) {
 		LOG_ERR("Cannot display welcome message (err: %d)", err);
 		return err;
 	}
-
+	// Enable start receiving data over UART
 	return uart_rx_enable(uart, rx->data, sizeof(rx->data), 50);
 }
 
@@ -564,7 +565,7 @@ void main(void)
 	int err = 0;
 
 	configure_gpio();
-
+	/* STEP */
 	err = uart_init();
 	if (err) {
 		error();

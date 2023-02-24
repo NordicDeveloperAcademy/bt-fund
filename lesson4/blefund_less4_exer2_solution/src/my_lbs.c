@@ -137,7 +137,7 @@ int my_lbs_send_button_state_indicate(bool button_state)
 		return -EACCES;
 	}
 	ind_params.attr = &my_lbs_svc.attrs[2];
-	ind_params.func = NULL;
+	ind_params.func = NULL; //The remote device has AKEed on at the host (ATT ACK)
 	ind_params.destroy = NULL;
 	ind_params.data = &button_state;
 	ind_params.len = sizeof(button_state);

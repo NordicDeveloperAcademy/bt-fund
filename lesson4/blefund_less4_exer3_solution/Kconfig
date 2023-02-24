@@ -12,7 +12,7 @@ config BT_NUS_THREAD_STACK_SIZE
 	int "Thread stack size"
 	default 1024
 	help
-	  Stack size used in each of the two threads
+	  Stack size used of the ble_write_thread thread
 
 config BT_NUS_UART_BUFFER_SIZE
 	int "UART payload buffer element size"
