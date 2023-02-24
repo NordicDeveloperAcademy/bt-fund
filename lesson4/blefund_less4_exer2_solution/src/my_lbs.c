@@ -28,6 +28,7 @@ LOG_MODULE_DECLARE(Lesson4_Exercise2);
 
 
 static bool                   notify_enabled;
+static bool                   notify_mysensor_enabled;
 static bool                   indicate_enabled;
 static bool                   button_state;
 static struct my_lbs_cb       lbs_cb;
@@ -43,6 +44,19 @@ static void mylbsbc_ccc_cfg_changed(const struct bt_gatt_attr *attr,
 	notify_enabled = (value == BT_GATT_CCC_NOTIFY);
 }
 
+/* STEP X -  */
+static void mylbsbc_ccc_mysensor_cfg_changed(const struct bt_gatt_attr *attr,
+				  uint16_t value)
+{
+	notify_mysensor_enabled = (value == BT_GATT_CCC_NOTIFY);
+}
+
+static void indicate_cb(struct bt_conn *conn,
+			struct bt_gatt_indicate_params *params, uint8_t err)
+{
+	//This function is called when the remote device has ACKed an indication at the host layer
+	LOG_DBG("Indication %s\n", err != 0U ? "fail" : "success");
+}
 static ssize_t write_led(struct bt_conn *conn,
 			 const struct bt_gatt_attr *attr,
 			 const void *buf,
@@ -117,6 +131,14 @@ BT_GATT_PRIMARY_SERVICE(BT_UUID_LBS),
 			       BT_GATT_CHRC_WRITE,
 			       BT_GATT_PERM_WRITE,
 			       NULL, write_led, NULL),
+/*STEP 20 - Create and add the MYSENSOR characteristic and its CCCD  */
+	BT_GATT_CHARACTERISTIC(BT_UUID_LBS_MYSENSOR,
+			       BT_GATT_CHRC_NOTIFY,
+			       BT_GATT_PERM_NONE, NULL, NULL,
+			       NULL),
+
+	BT_GATT_CCC(mylbsbc_ccc_mysensor_cfg_changed,
+		    BT_GATT_PERM_READ | BT_GATT_PERM_WRITE),
  
 );
 /* A function to register application callbacks for the LED and Button characteristics  */
@@ -137,7 +159,7 @@ int my_lbs_send_button_state_indicate(bool button_state)
 		return -EACCES;
 	}
 	ind_params.attr = &my_lbs_svc.attrs[2];
-	ind_params.func = NULL; //The remote device has AKEed on at the host (ATT ACK)
+	ind_params.func = indicate_cb; //A remote device has ACKed at its host layer (ATT ACK)
 	ind_params.destroy = NULL;
 	ind_params.data = &button_state;
 	ind_params.len = sizeof(button_state);
@@ -154,4 +176,16 @@ int my_lbs_send_button_state_notify(bool button_state)
 	return bt_gatt_notify(NULL, &my_lbs_svc.attrs[2],
 			      &button_state,
 			      sizeof(button_state));
+}
+
+/* STEP 22 - Define the function to send notifications for the MYSENSOR characteristic */
+int my_lbs_send_sensor_notify(uint32_t sensor_value)
+{
+	if (!notify_mysensor_enabled) {
+		return -EACCES;
+	}
+
+	return bt_gatt_notify(NULL, &my_lbs_svc.attrs[7], 
+			      &sensor_value,
+			      sizeof(sensor_value));
 }

@@ -31,10 +31,16 @@ extern "C" {
 #define BT_UUID_LBS_LED_VAL \
 	BT_UUID_128_ENCODE(0x00001525, 0x1212, 0xefde, 0x1523, 0x785feabcd123)
 
+/* STEP 19.1 - */
+/** @brief LED Characteristic UUID. */
+#define BT_UUID_LBS_MYSENSOR_VAL \
+	BT_UUID_128_ENCODE(0x00001526, 0x1212, 0xefde, 0x1523, 0x785feabcd123)
 
-#define BT_UUID_LBS           BT_UUID_DECLARE_128(BT_UUID_LBS_VAL)
-#define BT_UUID_LBS_BUTTON    BT_UUID_DECLARE_128(BT_UUID_LBS_BUTTON_VAL)
-#define BT_UUID_LBS_LED       BT_UUID_DECLARE_128(BT_UUID_LBS_LED_VAL)
+#define BT_UUID_LBS                BT_UUID_DECLARE_128(BT_UUID_LBS_VAL)
+#define BT_UUID_LBS_BUTTON         BT_UUID_DECLARE_128(BT_UUID_LBS_BUTTON_VAL)
+#define BT_UUID_LBS_LED            BT_UUID_DECLARE_128(BT_UUID_LBS_LED_VAL)
+/* STEP 19.2 - */
+#define BT_UUID_LBS_MYSENSOR       BT_UUID_DECLARE_128(BT_UUID_LBS_MYSENSOR_VAL)
 
 /** @brief Callback type for when an LED state change is received. */
 typedef void (*led_cb_t)(const bool led_state);
@@ -88,6 +94,19 @@ int my_lbs_send_button_state_indicate(bool button_state);
  *           Otherwise, a (negative) error code is returned.
  */
 int my_lbs_send_button_state_notify(bool button_state);
+
+/** @brief Send the sensor value as notification.
+ *
+ * This function sends an uint32_t  value, typically the value
+ * of a simulated sensor to all connected peers.
+ *
+ * @param[in] sensor_value The value of the simulated sensor.
+ *
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int my_lbs_send_sensor_notify(uint32_t sensor_value);
+
 #ifdef __cplusplus
 }
 #endif

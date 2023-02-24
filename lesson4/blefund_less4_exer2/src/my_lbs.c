@@ -36,6 +36,12 @@ static struct my_lbs_cb       lbs_cb;
 
 /* STEP 3 - Implement the configuration change callback function */
 
+//This function is called when a remote device has acknowledged the indication at its host layer
+static void indicate_cb(struct bt_conn *conn,
+			struct bt_gatt_indicate_params *params, uint8_t err)
+{
+	LOG_DBG("Indication %s\n", err != 0U ? "fail" : "success");
+}
 
 static ssize_t write_led(struct bt_conn *conn,
 			 const struct bt_gatt_attr *attr,
