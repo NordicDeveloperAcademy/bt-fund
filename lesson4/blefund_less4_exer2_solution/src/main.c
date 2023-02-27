@@ -31,10 +31,10 @@ LOG_MODULE_REGISTER(Lesson4_Exercise2, LOG_LEVEL_INF);
 #define USER_BUTTON             DK_BTN1_MSK
 
 #define RUN_LED_BLINK_INTERVAL  1000
-/* STEP X - */
+/* STEP 25 - Define the interval at which you want to send data at */
 #define NOTIFY_INTERVAL         500
 static bool app_button_state;
-/* STEP X - */
+/* STEP 23 - Define the data you want to stream over Bluetooth LE */
 static uint32_t app_sensor_value = 100;
 
 static const struct bt_data ad[] = {
@@ -47,11 +47,11 @@ static const struct bt_data sd[] = {
 	BT_DATA_BYTES(BT_DATA_UUID128_ALL, BT_UUID_LBS_VAL),
 };
 
-/* STEP X - */
+/* STEP 25 - Initialize a delayable work item */
 static void notify_work_handler(struct k_work *work);
 static K_WORK_DELAYABLE_DEFINE(notify_work, notify_work_handler);
 
-/* STEP X - */
+/* STEP 24 - Define a function to simulate the data */
 static void simulate_data(void)
 {
 	app_sensor_value++;
@@ -69,16 +69,16 @@ static bool app_button_cb(void)
 	return app_button_state;
 }
 
-/* STEP - X */
+/* STEP 27 - Define the workqueue iteam work  */
 static void notify_work_handler(struct k_work *work)
 {
 	/* Simulate data */
 	simulate_data();
 
-	/* Send notification */
+	/* Send notification, the function sends notifications only if a client is subscribed */
 	my_lbs_send_sensor_notify(app_sensor_value);
 
-	/* Reschedule the work item to the system work queue after a NOTIFY_INTERVAL */
+	/* Reschedule the workqueue item to the system work queue after a NOTIFY_INTERVAL delay */
 	k_work_reschedule(k_work_delayable_from_work(work), K_MSEC(NOTIFY_INTERVAL));
 }
 
@@ -174,7 +174,7 @@ void main(void)
 	}
 
 	LOG_INF("Advertising successfully started\n");
-	/* STEP - X */
+	/* STEP 28 - Submit the workqueue item to the system work queue */
 	k_work_schedule(&notify_work, K_NO_WAIT);
 	for (;;) {
 		dk_set_led(RUN_STATUS_LED, (++blink_status) % 2);

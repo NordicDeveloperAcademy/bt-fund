@@ -44,17 +44,17 @@ static void mylbsbc_ccc_cfg_changed(const struct bt_gatt_attr *attr,
 	notify_enabled = (value == BT_GATT_CCC_NOTIFY);
 }
 
-/* STEP X -  */
+/* STEP 21 - Define the configuration change callback function for the MYSENOR characteristic */
 static void mylbsbc_ccc_mysensor_cfg_changed(const struct bt_gatt_attr *attr,
 				  uint16_t value)
 {
 	notify_mysensor_enabled = (value == BT_GATT_CCC_NOTIFY);
 }
 
+//This function is called when a remote device has acknowledged the indication at its host layer
 static void indicate_cb(struct bt_conn *conn,
 			struct bt_gatt_indicate_params *params, uint8_t err)
 {
-	//This function is called when the remote device has ACKed an indication at the host layer
 	LOG_DBG("Indication %s\n", err != 0U ? "fail" : "success");
 }
 static ssize_t write_led(struct bt_conn *conn,

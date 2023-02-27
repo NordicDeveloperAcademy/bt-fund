@@ -31,7 +31,7 @@ extern "C" {
 #define BT_UUID_LBS_LED_VAL \
 	BT_UUID_128_ENCODE(0x00001525, 0x1212, 0xefde, 0x1523, 0x785feabcd123)
 
-/* STEP 19.1 - */
+/* STEP 19.1 - Assign a UUID to the MYSENSOR characteristic */
 /** @brief LED Characteristic UUID. */
 #define BT_UUID_LBS_MYSENSOR_VAL \
 	BT_UUID_128_ENCODE(0x00001526, 0x1212, 0xefde, 0x1523, 0x785feabcd123)
@@ -39,7 +39,7 @@ extern "C" {
 #define BT_UUID_LBS                BT_UUID_DECLARE_128(BT_UUID_LBS_VAL)
 #define BT_UUID_LBS_BUTTON         BT_UUID_DECLARE_128(BT_UUID_LBS_BUTTON_VAL)
 #define BT_UUID_LBS_LED            BT_UUID_DECLARE_128(BT_UUID_LBS_LED_VAL)
-/* STEP 19.2 - */
+/* STEP 19.2 - Convert the array to a generic UUID */
 #define BT_UUID_LBS_MYSENSOR       BT_UUID_DECLARE_128(BT_UUID_LBS_MYSENSOR_VAL)
 
 /** @brief Callback type for when an LED state change is received. */
