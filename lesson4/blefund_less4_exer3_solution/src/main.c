@@ -33,8 +33,7 @@
 
 #include <zephyr/logging/log.h>
 
-#define LOG_MODULE_NAME peripheral_uart
-LOG_MODULE_REGISTER(LOG_MODULE_NAME);
+LOG_MODULE_REGISTER(Lesson4_Exercise3, LOG_LEVEL_INF);
 
 #define STACKSIZE CONFIG_BT_NUS_THREAD_STACK_SIZE
 #define PRIORITY 7
@@ -496,7 +495,7 @@ static void bt_receive_cb(struct bt_conn *conn, const uint8_t *const data,
 		}
 	}
 }
-
+/**/
 static struct bt_nus_cb nus_cb = {
 	.received = bt_receive_cb,
 };
@@ -574,13 +573,13 @@ void main(void)
 	if (IS_ENABLED(CONFIG_BT_NUS_SECURITY_ENABLED)) {
 		err = bt_conn_auth_cb_register(&conn_auth_callbacks);
 		if (err) {
-			printk("Failed to register authorization callbacks.\n");
+			LOG_ERR("Failed to register authorization callbacks.\n");
 			return;
 		}
 
 		err = bt_conn_auth_info_cb_register(&conn_auth_info_callbacks);
 		if (err) {
-			printk("Failed to register authorization info callbacks.\n");
+			LOG_ERR("Failed to register authorization info callbacks.\n");
 			return;
 		}
 	}
@@ -597,7 +596,7 @@ void main(void)
 	if (IS_ENABLED(CONFIG_SETTINGS)) {
 		settings_load();
 	}
-
+/*STEP X - */
 	err = bt_nus_init(&nus_cb);
 	if (err) {
 		LOG_ERR("Failed to initialize UART service (err: %d)", err);
@@ -616,17 +615,17 @@ void main(void)
 		k_sleep(K_MSEC(RUN_LED_BLINK_INTERVAL));
 	}
 }
-
+/* STEP X - */
 void ble_write_thread(void)
 {
 	/* Don't go any further until BLE is initialized */
 	k_sem_take(&ble_init_ok, K_FOREVER);
 
 	for (;;) {
-		/* Wait indefinitely for data to be sent over bluetooth */
+		/* Wait indefinitely for data from the UART peripheral */
 		struct uart_data_t *buf = k_fifo_get(&fifo_uart_rx_data,
 						     K_FOREVER);
-
+        /* Send data over Bluetooth LE to remote device(s) */
 		if (bt_nus_send(NULL, buf->data, buf->len)) {
 			LOG_WRN("Failed to send data over BLE connection");
 		}
@@ -634,6 +633,6 @@ void ble_write_thread(void)
 		k_free(buf);
 	}
 }
-
+/* STEP X - */
 K_THREAD_DEFINE(ble_write_thread_id, STACKSIZE, ble_write_thread, NULL, NULL,
 		NULL, PRIORITY, 0, 0);

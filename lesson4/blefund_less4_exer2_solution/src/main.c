@@ -30,6 +30,9 @@ LOG_MODULE_REGISTER(Lesson4_Exercise2, LOG_LEVEL_INF);
 #define USER_LED                DK_LED3
 #define USER_BUTTON             DK_BTN1_MSK
 
+#define STACKSIZE 1024
+#define PRIORITY 7
+
 #define RUN_LED_BLINK_INTERVAL  1000
 /* STEP 25 - Define the interval at which you want to send data at */
 #define NOTIFY_INTERVAL         500
@@ -46,10 +49,6 @@ static const struct bt_data ad[] = {
 static const struct bt_data sd[] = {
 	BT_DATA_BYTES(BT_DATA_UUID128_ALL, BT_UUID_LBS_VAL),
 };
-
-/* STEP 25 - Initialize a delayable work item */
-static void notify_work_handler(struct k_work *work);
-static K_WORK_DELAYABLE_DEFINE(notify_work, notify_work_handler);
 
 /* STEP 24 - Define a function to simulate the data */
 static void simulate_data(void)
@@ -69,17 +68,18 @@ static bool app_button_cb(void)
 	return app_button_state;
 }
 
-/* STEP 27 - Define the workqueue iteam work  */
-static void notify_work_handler(struct k_work *work)
+/* STEP 27 - Define the thread function  */
+void send_data_thread(void)
 {
-	/* Simulate data */
-	simulate_data();
+	while(1){
+		/* Simulate data */
+		simulate_data();
+		/* Send notification, the function sends notifications only if a client is subscribed */
+		my_lbs_send_sensor_notify(app_sensor_value);
 
-	/* Send notification, the function sends notifications only if a client is subscribed */
-	my_lbs_send_sensor_notify(app_sensor_value);
-
-	/* Reschedule the workqueue item to the system work queue after a NOTIFY_INTERVAL delay */
-	k_work_reschedule(k_work_delayable_from_work(work), K_MSEC(NOTIFY_INTERVAL));
+		k_sleep(K_MSEC(NOTIFY_INTERVAL));
+	}
+		
 }
 
 
@@ -174,10 +174,11 @@ void main(void)
 	}
 
 	LOG_INF("Advertising successfully started\n");
-	/* STEP 28 - Submit the workqueue item to the system work queue */
-	k_work_schedule(&notify_work, K_NO_WAIT);
 	for (;;) {
 		dk_set_led(RUN_STATUS_LED, (++blink_status) % 2);
 		k_sleep(K_MSEC(RUN_LED_BLINK_INTERVAL));
 	}
 }
+/* STEP 26 - Define and initialize a thread to send data periodically */
+K_THREAD_DEFINE(send_data_thread_id, STACKSIZE, send_data_thread, NULL, NULL,
+		NULL, PRIORITY, 0, 0);
