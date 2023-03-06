@@ -31,6 +31,11 @@ LOG_MODULE_REGISTER(Lesson4_Exercise2, LOG_LEVEL_INF);
 #define USER_BUTTON             DK_BTN1_MSK
 
 #define RUN_LED_BLINK_INTERVAL  1000
+/* STEP 17 - Define the interval at which you want to send data at */
+
+static bool app_button_state;
+/* STEP 15 - Define the data you want to stream over Bluetooth LE */
+
 
 static bool app_button_state;
 
@@ -44,6 +49,8 @@ static const struct bt_data sd[] = {
 	BT_DATA_BYTES(BT_DATA_UUID128_ALL, BT_UUID_LBS_VAL),
 };
 
+/* STEP 16 - Define a function to simulate the data */
+
 static void app_led_cb(bool led_state)
 {
 	dk_set_led(USER_LED, led_state);
@@ -53,6 +60,9 @@ static bool app_button_cb(void)
 {
 	return app_button_state;
 }
+
+/* STEP 18.1 - Define the thread function  */
+
 
 static struct my_lbs_cb app_callbacks = {
 	.led_cb    = app_led_cb,
@@ -64,7 +74,6 @@ static void button_changed(uint32_t button_state, uint32_t has_changed)
 	if (has_changed & USER_BUTTON) {
 		uint32_t user_button_state = button_state & USER_BUTTON;
 		/*STEP 6 - Send indication on a button press*/ 
-		/*STEP 14 - Replace my_lbs_send_button_state_indicate() with my_lbs_send_button_state_notify() to send notification */ 
 		
 		app_button_state = user_button_state ? true : false;
 	}
@@ -151,3 +160,5 @@ void main(void)
 		k_sleep(K_MSEC(RUN_LED_BLINK_INTERVAL));
 	}
 }
+
+/* STEP 18.2 - Define and initialize a thread to send data periodically */

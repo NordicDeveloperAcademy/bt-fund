@@ -27,7 +27,7 @@
 LOG_MODULE_DECLARE(Lesson4_Exercise2);
 
 
-static bool                   notify_enabled;
+static bool                   notify_mysensor_enabled;
 static bool                   indicate_enabled;
 static bool                   button_state;
 static struct my_lbs_cb       lbs_cb;
@@ -35,6 +35,8 @@ static struct my_lbs_cb       lbs_cb;
 /* STEP 4 - Define an indication parameter */
 
 /* STEP 3 - Implement the configuration change callback function */
+
+/* STEP 13 - Define the configuration change callback function for the MYSENSOR characteristic */
 
 //This function is called when a remote device has acknowledged the indication at its host layer
 static void indicate_cb(struct bt_conn *conn,
@@ -104,7 +106,6 @@ static ssize_t read_button(struct bt_conn *conn,
 BT_GATT_SERVICE_DEFINE(my_lbs_svc,
 BT_GATT_PRIMARY_SERVICE(BT_UUID_LBS),
 /* STEP 1 - Modify the Button characteristic declaration to support indication */
-/* STEP 11 - Change BT_GATT_CHRC_INDICATE to BT_GATT_CHRC_NOTIFY */
 	BT_GATT_CHARACTERISTIC(BT_UUID_LBS_BUTTON,
 			       BT_GATT_CHRC_READ ,
 			       BT_GATT_PERM_READ, read_button, NULL,
@@ -116,7 +117,8 @@ BT_GATT_PRIMARY_SERVICE(BT_UUID_LBS),
 			       BT_GATT_CHRC_WRITE,
 			       BT_GATT_PERM_WRITE,
 			       NULL, write_led, NULL),
- 
+/*STEP 12 - Create and add the MYSENSOR characteristic and its CCCD  */
+
 );
 /* A function to register application callbacks for the LED and Button characteristics  */
 int my_lbs_init(struct my_lbs_cb *callbacks)
@@ -129,6 +131,6 @@ int my_lbs_init(struct my_lbs_cb *callbacks)
 	return 0;
 }
 
-/* STEP 5 - Define the function to send indications */
+/* STEP 5.1 - Define the function to send indications */
 
-/* STEP 13 - Define the function to send notifications */
+/* STEP 14 - Define the function to send notifications for the MYSENSOR characteristic */

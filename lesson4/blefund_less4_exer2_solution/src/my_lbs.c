@@ -40,11 +40,10 @@ static struct bt_gatt_indicate_params ind_params;
 static void mylbsbc_ccc_cfg_changed(const struct bt_gatt_attr *attr,
 				  uint16_t value)
 {
-	/* STEP 12 - Change the configuration change callback function to detect enabling/disabling notifications  */
-	notify_enabled = (value == BT_GATT_CCC_NOTIFY);
+	indicate_enabled = (value == BT_GATT_CCC_INDICATE);
 }
 
-/* STEP 21 - Define the configuration change callback function for the MYSENOR characteristic */
+/* STEP 13 - Define the configuration change callback function for the MYSENSOR characteristic */
 static void mylbsbc_ccc_mysensor_cfg_changed(const struct bt_gatt_attr *attr,
 				  uint16_t value)
 {
@@ -118,9 +117,8 @@ static ssize_t read_button(struct bt_conn *conn,
 BT_GATT_SERVICE_DEFINE(my_lbs_svc,
 BT_GATT_PRIMARY_SERVICE(BT_UUID_LBS),
 /* STEP 1 - Modify the Button characteristic declaration to support indication */
-/* STEP 11 - Change BT_GATT_CHRC_INDICATE to BT_GATT_CHRC_NOTIFY */
 	BT_GATT_CHARACTERISTIC(BT_UUID_LBS_BUTTON,
-			       BT_GATT_CHRC_READ | BT_GATT_CHRC_NOTIFY,
+			       BT_GATT_CHRC_READ | BT_GATT_CHRC_INDICATE,
 			       BT_GATT_PERM_READ, read_button, NULL,
 			       &button_state),
 /* STEP 2 - Create and add the Client Characteristic Configuration Descriptor */
@@ -131,7 +129,7 @@ BT_GATT_PRIMARY_SERVICE(BT_UUID_LBS),
 			       BT_GATT_CHRC_WRITE,
 			       BT_GATT_PERM_WRITE,
 			       NULL, write_led, NULL),
-/*STEP 20 - Create and add the MYSENSOR characteristic and its CCCD  */
+/*STEP 12 - Create and add the MYSENSOR characteristic and its CCCD  */
 	BT_GATT_CHARACTERISTIC(BT_UUID_LBS_MYSENSOR,
 			       BT_GATT_CHRC_NOTIFY,
 			       BT_GATT_PERM_NONE, NULL, NULL,
@@ -166,19 +164,7 @@ int my_lbs_send_button_state_indicate(bool button_state)
 	return bt_gatt_indicate(NULL, &ind_params);
 }
 
-/* STEP 13 - Define the function to send notifications */
-int my_lbs_send_button_state_notify(bool button_state)
-{
-	if (!notify_enabled) {
-		return -EACCES;
-	}
-
-	return bt_gatt_notify(NULL, &my_lbs_svc.attrs[2],
-			      &button_state,
-			      sizeof(button_state));
-}
-
-/* STEP 22 - Define the function to send notifications for the MYSENSOR characteristic */
+/* STEP 14 - Define the function to send notifications for the MYSENSOR characteristic */
 int my_lbs_send_sensor_notify(uint32_t sensor_value)
 {
 	if (!notify_mysensor_enabled) {
