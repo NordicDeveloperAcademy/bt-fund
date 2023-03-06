@@ -61,15 +61,10 @@ static const struct device *uart = DEVICE_DT_GET(DT_CHOSEN(nordic_nus_uart));
 static struct k_work_delayable uart_work;
 
 /* STEP 6.2 - Declare the sturct of the data item of the FIFOs */
-struct uart_data_t {
-	void *fifo_reserved;
-	uint8_t data[CONFIG_BT_NUS_UART_BUFFER_SIZE];
-	uint16_t len;
-};
+
 
 /* STEP 6.1 - Declare the FIFOs */
-static K_FIFO_DEFINE(fifo_uart_tx_data); 
-static K_FIFO_DEFINE(fifo_uart_rx_data);
+
 
 static const struct bt_data ad[] = {
 	BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
@@ -180,7 +175,7 @@ static void uart_cb(const struct device *dev, struct uart_event *evt, void *user
 
 		if (buf->len > 0) {
 			/* STEP 9.1 -  Push the data received from the UART peripheral into the fifo_uart_rx_data FIFO */
-			k_fifo_put(&fifo_uart_rx_data, buf);
+
 		} else {
 			k_free(buf);
 		}
@@ -490,16 +485,12 @@ static void bt_receive_cb(struct bt_conn *conn, const uint8_t *const data,
 			tx->len++;
 		}
         /* STEP 8.3 - Forward the data received over Bluetooth LE to the UART peripheral */
-		err = uart_tx(uart, tx->data, tx->len, SYS_FOREVER_MS);
-		if (err) {
-			k_fifo_put(&fifo_uart_tx_data, tx);
-		}
+
+
 	}
 }
 /* STEP 8.1 - Create a variable of type bt_nus_cb and initialize it*/
-static struct bt_nus_cb nus_cb = {
-	.received = bt_receive_cb,
-};
+
 
 void error(void)
 {
@@ -566,10 +557,7 @@ void main(void)
 
 	configure_gpio();
 	/* STEP 7 - Initialize the UART Peripheral  */
-	err = uart_init();
-	if (err) {
-		error();
-	}
+
 
 	if (IS_ENABLED(CONFIG_BT_NUS_SECURITY_ENABLED)) {
 		err = bt_conn_auth_cb_register(&conn_auth_callbacks);
@@ -597,12 +585,9 @@ void main(void)
 	if (IS_ENABLED(CONFIG_SETTINGS)) {
 		settings_load();
 	}
-/* STEP 8.2 - Pass your application callback function to the NUS service */
-	err = bt_nus_init(&nus_cb);
-	if (err) {
-		LOG_ERR("Failed to initialize UART service (err: %d)", err);
-		return;
-	}
+/*STEP 8.2 - Pass your application callback function to the NUS service */
+
+
 
 	err = bt_le_adv_start(BT_LE_ADV_CONN, ad, ARRAY_SIZE(ad), sd,
 			      ARRAY_SIZE(sd));
@@ -617,23 +602,6 @@ void main(void)
 	}
 }
 /* STEP 9.3 - Define the thread function  */
-void ble_write_thread(void)
-{
-	/* Don't go any further until BLE is initialized */
-	k_sem_take(&ble_init_ok, K_FOREVER);
 
-	for (;;) {
-		/* Wait indefinitely for data from the UART peripheral */
-		struct uart_data_t *buf = k_fifo_get(&fifo_uart_rx_data,
-						     K_FOREVER);
-        /* Send data over Bluetooth LE to remote device(s) */
-		if (bt_nus_send(NULL, buf->data, buf->len)) {
-			LOG_WRN("Failed to send data over BLE connection");
-		}
 
-		k_free(buf);
-	}
-}
 /* STEP 9.2 - Create a dedicated thread for sending the data over Bluetooth LE. */
-K_THREAD_DEFINE(ble_write_thread_id, STACKSIZE, ble_write_thread, NULL, NULL,
-		NULL, PRIORITY, 0, 0);
