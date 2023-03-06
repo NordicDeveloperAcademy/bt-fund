@@ -59,14 +59,15 @@ static struct bt_conn *auth_conn;
 
 static const struct device *uart = DEVICE_DT_GET(DT_CHOSEN(nordic_nus_uart));
 static struct k_work_delayable uart_work;
-/* STEP X - */
+
+/* STEP 5.2 - Declare the sturct of the data item of the FIFOs */
 struct uart_data_t {
 	void *fifo_reserved;
 	uint8_t data[CONFIG_BT_NUS_UART_BUFFER_SIZE];
 	uint16_t len;
 };
 
-/*STEP X -  */
+/*STEP 5.1 - Declare the FIFOs */
 static K_FIFO_DEFINE(fifo_uart_tx_data); 
 static K_FIFO_DEFINE(fifo_uart_rx_data);
 
@@ -178,7 +179,7 @@ static void uart_cb(const struct device *dev, struct uart_event *evt, void *user
 				   data);
 
 		if (buf->len > 0) {
-			/* STEP X - */
+			/* STEP 8.1 -  Push the data received from the UART peripheral into the fifo_uart_rx_data FIFO */
 			k_fifo_put(&fifo_uart_rx_data, buf);
 		} else {
 			k_free(buf);
@@ -495,7 +496,7 @@ static void bt_receive_cb(struct bt_conn *conn, const uint8_t *const data,
 		}
 	}
 }
-/**/
+/* STEP 7.1 - Create a variable of type bt_nus_cb and initialize it*/
 static struct bt_nus_cb nus_cb = {
 	.received = bt_receive_cb,
 };
@@ -564,7 +565,7 @@ void main(void)
 	int err = 0;
 
 	configure_gpio();
-	/* STEP */
+	/* STEP 6 - Initialize the UART Peripheral  */
 	err = uart_init();
 	if (err) {
 		error();
@@ -596,7 +597,7 @@ void main(void)
 	if (IS_ENABLED(CONFIG_SETTINGS)) {
 		settings_load();
 	}
-/*STEP X - */
+/*STEP 7.2 - Pass your application callback function to the NUS service */
 	err = bt_nus_init(&nus_cb);
 	if (err) {
 		LOG_ERR("Failed to initialize UART service (err: %d)", err);
@@ -615,7 +616,7 @@ void main(void)
 		k_sleep(K_MSEC(RUN_LED_BLINK_INTERVAL));
 	}
 }
-/* STEP X - */
+/* STEP 8.3 - Define the thread function  */
 void ble_write_thread(void)
 {
 	/* Don't go any further until BLE is initialized */
@@ -633,6 +634,6 @@ void ble_write_thread(void)
 		k_free(buf);
 	}
 }
-/* STEP X - */
+/* STEP 8.2 - Create a dedicated thread for sending the data over Bluetooth LE. */
 K_THREAD_DEFINE(ble_write_thread_id, STACKSIZE, ble_write_thread, NULL, NULL,
 		NULL, PRIORITY, 0, 0);
