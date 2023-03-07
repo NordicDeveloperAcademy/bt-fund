@@ -9,13 +9,23 @@
 #include <zephyr/logging/log.h>
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/gap.h>
+#include <zephyr/bluetooth/gatt.h>
 #include <zephyr/bluetooth/uuid.h>
 #include <zephyr/bluetooth/addr.h>
 /* STEP 1 - Include the header file for managing Bluetooth LE Connections */
 #include <zephyr/bluetooth/conn.h>
+/* STEP 8 - Include the header file for the Led Button Service */
+#include <bluetooth/services/lbs.h>
+
 #include <dk_buttons_and_leds.h>
 
 #define USER_BUTTON             DK_BTN1_MSK
+#define RUN_STATUS_LED          DK_LED1
+/* STEP 3.1 - Define an LED to show the connection status */
+#define CONNECTION_STATUS_LED   DK_LED2
+#define RUN_LED_BLINK_INTERVAL  1000
+
+struct bt_conn *my_conn = NULL;
 
 
 static struct bt_le_adv_param *adv_param = BT_LE_ADV_PARAM((BT_LE_ADV_OPT_CONNECTABLE|BT_LE_ADV_OPT_USE_IDENTITY), /* Connectable advertising and use identity address */
@@ -29,10 +39,7 @@ LOG_MODULE_REGISTER(Lesson3_Exercise1, LOG_LEVEL_INF);
 #define DEVICE_NAME             CONFIG_BT_DEVICE_NAME
 #define DEVICE_NAME_LEN         (sizeof(DEVICE_NAME) - 1)
 
-#define RUN_STATUS_LED          DK_LED1
-/* STEP 2.3 - Create an LED to show the connection status */
-#define CONNECTION_STATUS_LED   DK_LED2
-#define RUN_LED_BLINK_INTERVAL  1000
+
 
 static const struct bt_data ad[] = {
 	BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
@@ -44,7 +51,7 @@ static const struct bt_data sd[] = {
 };
 
 /* Callbacks */
-/* STEP 2.1 - Add our custom callback functions */
+/* STEP 2.2 - Implement the callback functions */
 void on_connected(struct bt_conn *conn, uint8_t err)
 {
     if (err) {
@@ -52,37 +59,48 @@ void on_connected(struct bt_conn *conn, uint8_t err)
         return;
     }
     LOG_INF("Connected");
+    my_conn = bt_conn_ref(conn);
     dk_set_led(CONNECTION_STATUS_LED, 1);
 }
 
 void on_disconnected(struct bt_conn *conn, uint8_t reason)
 {
     LOG_INF("Disconnected. Reason %d", reason);
+    bt_conn_unref(my_conn);
     dk_set_led(CONNECTION_STATUS_LED, 0);
 }
 
+/* STEP 2.1 - Declare the connection_callback structure */
 struct bt_conn_cb connection_callbacks = {
     .connected              = on_connected,
     .disconnected           = on_disconnected,
 };
 
+
 static void button_changed(uint32_t button_state, uint32_t has_changed)
 {
-	if (has_changed & button_state & USER_BUTTON) {
+    int err;
+    if (has_changed & USER_BUTTON) {
         LOG_INF("Button changed");
-	}
+
+        /* STEP 8.2 - Send a notification using the LBS characteristic. */
+        err = bt_lbs_send_button_state(button_state ? true : false);
+        if (err) {
+            LOG_ERR("Couldn't send notification. err: %d", err);
+        }
+    }
 }
 
 static int init_button(void)
 {
-	int err;
+    int err;
 
-	err = dk_buttons_init(button_changed);
-	if (err) {
-		printk("Cannot init buttons (err: %d)", err);
-	}
+    err = dk_buttons_init(button_changed);
+    if (err) {
+        LOG_INF("Cannot init buttons (err: %d)", err);
+    }
 
-	return err;
+    return err;
 }
 
 void main(void)
@@ -100,7 +118,7 @@ void main(void)
 	
 	err = init_button();
 	if (err) {
-		printk("Button init failed (err %d)", err);
+		LOG_INF("Button init failed (err %d)", err);
 		return;
 	}
 
@@ -113,6 +131,7 @@ void main(void)
 
     /* STEP 2.2 - Register our custom callbacks */
     bt_conn_cb_register(&connection_callbacks);
+
 	LOG_INF("Bluetooth initialized");
 	err = bt_le_adv_start(adv_param, ad, ARRAY_SIZE(ad),
 			      sd, ARRAY_SIZE(sd));

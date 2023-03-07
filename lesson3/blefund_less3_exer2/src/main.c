@@ -9,14 +9,14 @@
 #include <zephyr/logging/log.h>
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/gap.h>
+#include <zephyr/bluetooth/gatt.h>
 #include <zephyr/bluetooth/uuid.h>
 #include <zephyr/bluetooth/addr.h>
 #include <zephyr/bluetooth/conn.h>
-/* STEP 4 - Include the header for the Battery Service */
+#include <bluetooth/services/lbs.h>
+
 
 #include <dk_buttons_and_leds.h>
-
-#define USER_BUTTON             DK_BTN1_MSK
 
 
 static struct bt_le_adv_param *adv_param = BT_LE_ADV_PARAM((BT_LE_ADV_OPT_CONNECTABLE|BT_LE_ADV_OPT_USE_IDENTITY), /* Connectable advertising and use identity address */
@@ -26,13 +26,23 @@ static struct bt_le_adv_param *adv_param = BT_LE_ADV_PARAM((BT_LE_ADV_OPT_CONNEC
 
 
 LOG_MODULE_REGISTER(Lesson3_Exercise2, LOG_LEVEL_INF);
+struct bt_conn *my_conn = NULL;
+
+/* STEP 11 - Create variable that holds callback for MTU negotiation */
+
+/* STEP 13.4 - forward declaration of exchange_func(): */
+
+
 
 #define DEVICE_NAME             CONFIG_BT_DEVICE_NAME
 #define DEVICE_NAME_LEN         (sizeof(DEVICE_NAME) - 1)
 
+#define USER_BUTTON             DK_BTN1_MSK
 #define RUN_STATUS_LED          DK_LED1
 #define CONNECTION_STATUS_LED   DK_LED2
 #define RUN_LED_BLINK_INTERVAL  1000
+
+
 
 static const struct bt_data ad[] = {
 	BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
@@ -43,6 +53,12 @@ static const struct bt_data sd[] = {
 	BT_DATA_BYTES(BT_DATA_UUID128_ALL, BT_UUID_128_ENCODE(0x00001523, 0x1212, 0xefde, 0x1523, 0x785feabcd123)),
 };
 
+/* STEP 7 - Update the connection's PHY */
+
+/* STEP 10 - Update the connection data length */
+
+/* STEP 11 - Update the connection's MTU */
+
 /* Callbacks */
 void on_connected(struct bt_conn *conn, uint8_t err)
 {
@@ -51,37 +67,50 @@ void on_connected(struct bt_conn *conn, uint8_t err)
         return;
     }
     LOG_INF("Connected");
+    my_conn = bt_conn_ref(conn);
     dk_set_led(CONNECTION_STATUS_LED, 1);
-    /* STEP 2 - Fetch connection parameters from the current connection */
+    /* STEP 1 - Fetch connection parameters from the current connection */
     
-    /* STEP 9 - Update the connection's PHY */
+    /* STEP 13.5 - update all connection parameters */
+
 }
 
 void on_disconnected(struct bt_conn *conn, uint8_t reason)
 {
     LOG_INF("Disconnected. Reason %d", reason);
     dk_set_led(CONNECTION_STATUS_LED, 0);
+    bt_conn_unref(my_conn);
 }
 
-/* STEP 7 - Add the callback for connection parameter updates */
+/* STEP 4 - Add the callback for connection parameter updates */
 
-/* STEP 10 - Write a callback function to inform about updates in the PHY */
+/* STEP 8 - Write a callback function to inform about updates in the PHY */
+
+/* STEP 13.1 - Write a callback function to inform about updates in data length*/
 
 struct bt_conn_cb connection_callbacks = {
     .connected              = on_connected,
     .disconnected           = on_disconnected,
-    /* STEP 7 - Add the callback for connection parameter updates */
-    /* STEP 12 - Add the phy_updated callback */
+    /* STEP 4 - Add the callback for connection parameter updates */
+    /* STEP 8 - Add the phy_updated callback */
+    /* STEP 13.2 - Add the callback for data length updates */
 };
+
+/* STEP 13.3 - Implement callback function for MTU exchange */
+
 
 /* STEP 5 - Send a notification using the Battery Service */
 
 static void button_changed(uint32_t button_state, uint32_t has_changed)
 {
-	if (has_changed & button_state & USER_BUTTON) {
+    int err;
+    if (has_changed & USER_BUTTON) {
         LOG_INF("Button changed");
-        /* STEP 6 - Send notification */
-	}
+        err = bt_lbs_send_button_state(button_state ? true : false);
+        if (err) {
+            LOG_ERR("Couldn't send notification. err: %d", err);
+        }
+    }
 }
 
 static int init_button(void)
@@ -90,7 +119,7 @@ static int init_button(void)
 
 	err = dk_buttons_init(button_changed);
 	if (err) {
-		printk("Cannot init buttons (err: %d)", err);
+		LOG_INF("Cannot init buttons (err: %d)", err);
 	}
 
 	return err;
@@ -111,7 +140,7 @@ void main(void)
 	
 	err = init_button();
 	if (err) {
-		printk("Button init failed (err %d)", err);
+		LOG_ERR("Button init failed (err %d)", err);
 		return;
 	}
 
