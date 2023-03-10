@@ -68,7 +68,6 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 	dk_set_led_off(CON_STATUS_LED);
 }
 
-/* Step 3.2.1 add security_changed callback function */
 static void security_changed(struct bt_conn *conn, bt_security_t level,
 			     enum bt_security_err err)
 {
@@ -86,11 +85,9 @@ static void security_changed(struct bt_conn *conn, bt_security_t level,
 BT_CONN_CB_DEFINE(conn_callbacks) = {
 	.connected        = connected,
 	.disconnected     = disconnected,
-/* Step 3.2.2 add security_changed to the callbacks list*/	
 	.security_changed = security_changed,
 };
 
-/* Step 4.3.1 Add the authentication callbacks to the application*/
 static void auth_passkey_display(struct bt_conn *conn, unsigned int passkey)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
@@ -172,7 +169,6 @@ void main(void)
 		return;
 	}
 
-/* Step 4.3.2 Register the callback with the stack in main() */
 	err = bt_conn_auth_cb_register(&conn_auth_callbacks);
 	if (err) {
 		printk("Failed to register authorization callbacks.\n");
