@@ -89,9 +89,8 @@ static ssize_t read_button(struct bt_conn *conn,
 	return 0;
 }
 
-/* Step 2.1 replace BT_GATT_PERM_WRITE permission of LED characteristic with BT_GATT_PERM_WRITE_ENCRYPT to require encryption  */ 
+
 /* LED Button Service Declaration */
-/* Step 4.1 replace BT_GATT_PERM_WRITE_ENCRYPT on LED characteristic with BT_GATT_PERM_WRITE_AUTHEN to require encryption with authentication */
 BT_GATT_SERVICE_DEFINE(lbs_svc,
 BT_GATT_PRIMARY_SERVICE(BT_UUID_LBS),
 	BT_GATT_CHARACTERISTIC(BT_UUID_LBS_BUTTON,
@@ -100,6 +99,8 @@ BT_GATT_PRIMARY_SERVICE(BT_UUID_LBS),
 			       &button_state),
 	BT_GATT_CCC(lbslc_ccc_cfg_changed,
 		    BT_GATT_PERM_READ | BT_GATT_PERM_WRITE),
+/* STEP 1.1 - Change the LED characteristic permission to require encryption */
+/* STEP 8 - Change the LED characteristic permission to require pairing with authentication */
 	BT_GATT_CHARACTERISTIC(BT_UUID_LBS_LED,
 			       BT_GATT_CHRC_WRITE,
 			       BT_GATT_PERM_WRITE,

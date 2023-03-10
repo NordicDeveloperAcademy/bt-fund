@@ -68,15 +68,20 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 	dk_set_led_off(CON_STATUS_LED);
 }
 
-/* Step 3.2.1 add security_changed callback function */
+/* STEP 5.2 Define the callback function security_changed() */
 
 BT_CONN_CB_DEFINE(conn_callbacks) = {
 	.connected        = connected,
 	.disconnected     = disconnected,
-/* Step 3.2.2 add security_changed to the callbacks list*/
+/* STEP 5.1 - Add the security_changed member to the callback structure */
 };
 
-/* Step 4.3.1 Add the authentication callbacks to the application*/
+/* STEP 9.1 - Define the callback function auth_passkey_display */
+
+/* STEP 9.2 - Define the callback function auth_cancel */
+
+/* STEP 9.3 - Declare the authenticated pairing callback structure */
+
 
 static void app_led_cb(bool led_state)
 {
@@ -134,7 +139,7 @@ void main(void)
 		return;
 	}
 	
-/* Step 4.3.2 Register the callback with the stack in main() */
+/* STEP 10 - Register the authentication callbacks */
 
 	err = bt_enable(NULL);
 	if (err) {
