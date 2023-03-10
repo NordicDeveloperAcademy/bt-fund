@@ -68,7 +68,7 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 	dk_set_led_off(CON_STATUS_LED);
 }
 
-/* Step 3.2.1 add security_changed callback function */
+/* STEP 5.2 Define the callback function security_changed() */
 static void security_changed(struct bt_conn *conn, bt_security_t level,
 			     enum bt_security_err err)
 {
@@ -86,11 +86,11 @@ static void security_changed(struct bt_conn *conn, bt_security_t level,
 BT_CONN_CB_DEFINE(conn_callbacks) = {
 	.connected        = connected,
 	.disconnected     = disconnected,
-/* Step 3.2.2 add security_changed to the callbacks list*/	
+/* STEP 5.1 - Add the security_changed member to the callback structure */
 	.security_changed = security_changed,
 };
 
-/* Step 4.3.1 Add the authentication callbacks to the application*/
+/* STEP 9.1 - Define the callback function auth_passkey_display */
 static void auth_passkey_display(struct bt_conn *conn, unsigned int passkey)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
@@ -100,6 +100,7 @@ static void auth_passkey_display(struct bt_conn *conn, unsigned int passkey)
 	printk("Passkey for %s: %06u\n", addr, passkey);
 }
 
+/* STEP 9.2 - Define the callback function auth_cancel */
 static void auth_cancel(struct bt_conn *conn)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
@@ -109,11 +110,11 @@ static void auth_cancel(struct bt_conn *conn)
 	printk("Pairing cancelled: %s\n", addr);
 }
 
+/* STEP 9.3 - Declare the authenticated pairing callback structure */
 static struct bt_conn_auth_cb conn_auth_callbacks = {
 	.passkey_display = auth_passkey_display,
 	.cancel = auth_cancel,
 };
-
 
 
 static void app_led_cb(bool led_state)
@@ -172,7 +173,7 @@ void main(void)
 		return;
 	}
 
-/* Step 4.3.2 Register the callback with the stack in main() */
+/* STEP 10 - Register the authentication callbacks */
 	err = bt_conn_auth_cb_register(&conn_auth_callbacks);
 	if (err) {
 		printk("Failed to register authorization callbacks.\n");
