@@ -28,7 +28,7 @@ static struct bt_le_adv_param *adv_param = BT_LE_ADV_PARAM((BT_LE_ADV_OPT_CONNEC
 LOG_MODULE_REGISTER(Lesson3_Exercise2, LOG_LEVEL_INF);
 struct bt_conn *my_conn = NULL;
 
-/* STEP 11 - Create variable that holds callback for MTU negotiation */
+/* STEP 11.2 - Create variable that holds callback for MTU negotiation */
 static struct bt_gatt_exchange_params exchange_params;
 
 /* STEP 13.4 - forward declaration of exchange_func(): */
@@ -54,7 +54,7 @@ static const struct bt_data sd[] = {
 	BT_DATA_BYTES(BT_DATA_UUID128_ALL, BT_UUID_128_ENCODE(0x00001523, 0x1212, 0xefde, 0x1523, 0x785feabcd123)),
 };
 
-/* STEP 7 - Update the connection's PHY */
+/* STEP 7.1 - Define the function to update the connection's PHY */
 static void update_phy(struct bt_conn *conn)
 {
     int err;
@@ -69,7 +69,7 @@ static void update_phy(struct bt_conn *conn)
     }
 }
 
-/* STEP 10 - Update the connection data length */
+/* STEP 10 - Define the function to update the connection's data length */
 static void update_data_length(struct bt_conn *conn)
 {
     int err;
@@ -83,7 +83,7 @@ static void update_data_length(struct bt_conn *conn)
     }
 }
 
-/* STEP 11 - Update MTU */
+/* STEP 11.1 - Define the function to update the connection's MTU */
 static void update_mtu(struct bt_conn *conn)
 {
     int err;
@@ -105,19 +105,23 @@ void on_connected(struct bt_conn *conn, uint8_t err)
     LOG_INF("Connected");
     my_conn = bt_conn_ref(conn);
     dk_set_led(CONNECTION_STATUS_LED, 1);
-    /* STEP 1 - Fetch connection parameters from the current connection */
+
+    /* STEP 1.1 - Declare a structure to store the connection parameters */
     struct bt_conn_info info;
     err = bt_conn_get_info(conn, &info);
     if (err) {
         LOG_ERR("bt_conn_get_info() returned %d", err);
         return;
     }
+
+    /* STEP 1.2 - Add the connection parameters to your log */
     double connection_interval = info.le.interval*1.25; // in ms
     uint16_t supervision_timeout = info.le.interval*10; // in ms
     LOG_INF("Connection parameters: interval %.2f ms, latency %d intervals, timeout %d ms", connection_interval, info.le.latency, supervision_timeout);
 
-    /* STEP 13.5 - update all connection parameters */
+    /* STEP 7 - Update the PHY mode */
     update_phy(my_conn);
+    /* STEP 13.5 - Update the data length and MTU */
     update_data_length(my_conn);
     update_mtu(my_conn);
 }
@@ -129,7 +133,7 @@ void on_disconnected(struct bt_conn *conn, uint8_t reason)
     bt_conn_unref(my_conn);
 }
 
-/* STEP 4 - Add the callback for connection parameter updates */
+/* STEP 4.2 - Add the callback for connection parameter updates */
 void on_le_param_updated(struct bt_conn *conn, uint16_t interval, uint16_t latency, uint16_t timeout)
 {
     double connection_interval = interval*1.25;         // in ms
@@ -137,7 +141,7 @@ void on_le_param_updated(struct bt_conn *conn, uint16_t interval, uint16_t laten
     LOG_INF("Connection parameters updated: interval %.2f ms, latency %d intervals, timeout %d ms", connection_interval, latency, supervision_timeout);
 }
 
-/* STEP 8 - Write a callback function to inform about updates in the PHY */
+/* STEP 8.1 - Write a callback function to inform about updates in the PHY */
 void on_le_phy_updated(struct bt_conn *conn, struct bt_conn_le_phy_info *param)
 {
     // PHY Updated
@@ -164,9 +168,9 @@ void on_le_data_len_updated(struct bt_conn *conn, struct bt_conn_le_data_len_inf
 struct bt_conn_cb connection_callbacks = {
     .connected              = on_connected,
     .disconnected           = on_disconnected,
-    /* STEP 4 - Add the callback for connection parameter updates */
+    /* STEP 4.1 - Add the callback for connection parameter updates */
     .le_param_updated       = on_le_param_updated,
-    /* STEP 8 - Add the phy_updated callback */
+    /* STEP 8.3 - Add the callback for PHY mode updates */
     .le_phy_updated         = on_le_phy_updated,
     /* STEP 13.2 - Add the callback for data length updates */
     .le_data_len_updated    = on_le_data_len_updated,
@@ -185,7 +189,6 @@ static void exchange_func(struct bt_conn *conn, uint8_t att_err,
 
 
 /* STEP 5 - Send a notification using the Battery Service */
-
 static void button_changed(uint32_t button_state, uint32_t has_changed)
 {
     int err;
@@ -229,6 +232,7 @@ void main(void)
 		return;
 	}
 
+    bt_conn_cb_register(&connection_callbacks);
 
 	err = bt_enable(NULL);
 	if (err) {
@@ -236,7 +240,6 @@ void main(void)
 		return;
 	}
 
-    bt_conn_cb_register(&connection_callbacks);
 	LOG_INF("Bluetooth initialized");
 	err = bt_le_adv_start(adv_param, ad, ARRAY_SIZE(ad),
 			      sd, ARRAY_SIZE(sd));
