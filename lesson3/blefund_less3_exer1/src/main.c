@@ -14,7 +14,7 @@
 #include <zephyr/bluetooth/addr.h>
 /* STEP 1 - Include the header file for managing Bluetooth LE Connections */
 
-/* STEP 8 - Include the header file for the Led Button Service */
+/* STEP 8.2 - Include the header file for the LED Button Service */
 
 
 #include <dk_buttons_and_leds.h>
@@ -50,22 +50,14 @@ static const struct bt_data sd[] = {
 	BT_DATA_BYTES(BT_DATA_UUID128_ALL, BT_UUID_128_ENCODE(0x00001523, 0x1212, 0xefde, 0x1523, 0x785feabcd123)),
 };
 
-/* Callbacks */
 /* STEP 2.2 - Implement the callback functions */
 
 
 /* STEP 2.1 - Declare the connection_callback structure */
 
 
+/* STEP 8.3 - Send a notification using the LBS characteristic. */
 
-static void button_changed(uint32_t button_state, uint32_t has_changed)
-{
-    if (has_changed & USER_BUTTON) {
-        LOG_INF("Button changed");
-
-        /* STEP 8.2 - Send a notification using the LBS characteristic. */
-    }
-}
 
 static int init_button(void)
 {
@@ -98,14 +90,13 @@ void main(void)
 		return;
 	}
 
+    /* STEP 2.3 - Register our custom callbacks */
 
 	err = bt_enable(NULL);
 	if (err) {
 		LOG_ERR("Bluetooth init failed (err %d)", err);
 		return;
 	}
-
-    /* STEP 2.2 - Register our custom callbacks */
 
 	LOG_INF("Bluetooth initialized");
 	err = bt_le_adv_start(adv_param, ad, ARRAY_SIZE(ad),

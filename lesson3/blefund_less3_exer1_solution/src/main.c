@@ -14,7 +14,7 @@
 #include <zephyr/bluetooth/addr.h>
 /* STEP 1 - Include the header file for managing Bluetooth LE Connections */
 #include <zephyr/bluetooth/conn.h>
-/* STEP 8 - Include the header file for the Led Button Service */
+/* STEP 8.2 - Include the header file for the LED Button Service */
 #include <bluetooth/services/lbs.h>
 
 #include <dk_buttons_and_leds.h>
@@ -50,7 +50,6 @@ static const struct bt_data sd[] = {
 	BT_DATA_BYTES(BT_DATA_UUID128_ALL, BT_UUID_128_ENCODE(0x00001523, 0x1212, 0xefde, 0x1523, 0x785feabcd123)),
 };
 
-/* Callbacks */
 /* STEP 2.2 - Implement the callback functions */
 void on_connected(struct bt_conn *conn, uint8_t err)
 {
@@ -60,6 +59,8 @@ void on_connected(struct bt_conn *conn, uint8_t err)
     }
     LOG_INF("Connected");
     my_conn = bt_conn_ref(conn);
+
+	/* STEP 3.2  Turn the connection status LED on */
     dk_set_led(CONNECTION_STATUS_LED, 1);
 }
 
@@ -67,6 +68,8 @@ void on_disconnected(struct bt_conn *conn, uint8_t reason)
 {
     LOG_INF("Disconnected. Reason %d", reason);
     bt_conn_unref(my_conn);
+
+	/* STEP 3.3  Turn the connection status LED off */
     dk_set_led(CONNECTION_STATUS_LED, 0);
 }
 
@@ -77,13 +80,13 @@ struct bt_conn_cb connection_callbacks = {
 };
 
 
+/* STEP 8.3 - Send a notification using the LBS characteristic. */
 static void button_changed(uint32_t button_state, uint32_t has_changed)
 {
-    int err;
+	int err;
     if (has_changed & USER_BUTTON) {
         LOG_INF("Button changed");
 
-        /* STEP 8.2 - Send a notification using the LBS characteristic. */
         err = bt_lbs_send_button_state(button_state ? true : false);
         if (err) {
             LOG_ERR("Couldn't send notification. err: %d", err);
@@ -122,15 +125,14 @@ void main(void)
 		return;
 	}
 
+   /* STEP 2.3 - Register our custom callbacks */
+    bt_conn_cb_register(&connection_callbacks);
 
 	err = bt_enable(NULL);
 	if (err) {
 		LOG_ERR("Bluetooth init failed (err %d)", err);
 		return;
 	}
-
-    /* STEP 2.2 - Register our custom callbacks */
-    bt_conn_cb_register(&connection_callbacks);
 
 	LOG_INF("Bluetooth initialized");
 	err = bt_le_adv_start(adv_param, ad, ARRAY_SIZE(ad),
