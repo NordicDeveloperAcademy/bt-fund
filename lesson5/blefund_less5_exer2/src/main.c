@@ -4,27 +4,20 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr/types.h>
-#include <stddef.h>
-#include <string.h>
-#include <errno.h>
-#include <zephyr/sys/printk.h>
-#include <zephyr/sys/byteorder.h>
 #include <zephyr/kernel.h>
-#include <zephyr/drivers/gpio.h>
-#include <soc.h>
-
+#include <zephyr/logging/log.h>
 #include <zephyr/bluetooth/bluetooth.h>
-#include <zephyr/bluetooth/hci.h>
-#include <zephyr/bluetooth/conn.h>
-#include <zephyr/bluetooth/uuid.h>
 #include <zephyr/bluetooth/gatt.h>
+#include <zephyr/bluetooth/uuid.h>
+#include <zephyr/bluetooth/conn.h>
+#include <dk_buttons_and_leds.h>
 
 #include "lbs.h"
 
+/* STEP 1.2 - Add the header file for the Settings module */
 #include <zephyr/settings/settings.h>
 
-#include <dk_buttons_and_leds.h>
+LOG_MODULE_REGISTER(Lesson5_Exercise2, LOG_LEVEL_INF);
 
 #define DEVICE_NAME             CONFIG_BT_DEVICE_NAME
 #define DEVICE_NAME_LEN         (sizeof(DEVICE_NAME) - 1)
@@ -37,13 +30,14 @@
 #define USER_LED                DK_LED3
 
 #define USER_BUTTON             DK_BTN1_MSK
-// Step 3.1 add an extra button for bond deleting function
 
-// Step 5.2.1 define an extra button for "pairing mode"
+/* STEP 2.1 - Add extra button for bond deleting function */
 
-// Step 4.2 Add new advertising configurations when Accept List is used and when Accept List is empty
+/* STEP 4.2.1 - Add extra button for enablig pairing mode */
 
+/* STEP 3.2.1 - Define advertising parameter for no Accept List */
 
+/* STEP 3.2.2 - Define advertising parameter for when Accept List is used */
 
 static bool app_button_state;
 
@@ -56,32 +50,32 @@ static const struct bt_data sd[] = {
 	BT_DATA_BYTES(BT_DATA_UUID128_ALL, BT_UUID_LBS_VAL),
 };
 
-// Step 4.3 Add the code that loops through bond list to add the addresses to the list
+/* STEP 3.3.1 - Define the callback to add addreses to the Accept List */
 
-/* Step 4.4.1 Make a new function to start advertising which executes setup_accept_list() in step 4.3 to build the list, 
-and start advertising with accordingly parameters.*/
+/* STEP 3.3.2 - Define the function to loop through the bond list */
 
-
-static void connected(struct bt_conn *conn, uint8_t err)
+static void on_connected(struct bt_conn *conn, uint8_t err)
 {
 	if (err) {
-		printk("Connection failed (err %u)\n", err);
+		LOG_INF("Connection failed (err %u)\n", err);
 		return;
 	}
 
-	printk("Connected\n");
+	LOG_INF("Connected\n");
 
 	dk_set_led_on(CON_STATUS_LED);
 }
 
-static void disconnected(struct bt_conn *conn, uint8_t reason)
+static void on_disconnected(struct bt_conn *conn, uint8_t reason)
 {
-	printk("Disconnected (reason %u)\n", reason);
-
+	LOG_INF("Disconnected (reason %u)\n", reason);
 	dk_set_led_off(CON_STATUS_LED);
+	/* STEP 3.5 - Start advertising with Accept List */
+	k_work_submit(&advertise_acceptlist_work);
+
 }
 
-static void security_changed(struct bt_conn *conn, bt_security_t level,
+static void on_security_changed(struct bt_conn *conn, bt_security_t level,
 			     enum bt_security_err err)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
@@ -89,24 +83,25 @@ static void security_changed(struct bt_conn *conn, bt_security_t level,
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
 	if (!err) {
-		printk("Security changed: %s level %u\n", addr, level);
+		LOG_INF("Security changed: %s level %u\n", addr, level);
 	} else {
-		printk("Security failed: %s level %u err %d\n", addr, level,
+		LOG_INF("Security failed: %s level %u err %d\n", addr, level,
 			err);
 	}
 }
-BT_CONN_CB_DEFINE(conn_callbacks) = {
-	.connected        = connected,
-	.disconnected     = disconnected,
-	.security_changed = security_changed,
+struct bt_conn_cb connection_callbacks = {
+	.connected        = on_connected,
+	.disconnected     = on_disconnected,
+	.security_changed = on_security_changed,
 };
+
 static void auth_passkey_display(struct bt_conn *conn, unsigned int passkey)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
-	printk("Passkey for %s: %06u\n", addr, passkey);
+	LOG_INF("Passkey for %s: %06u\n", addr, passkey);
 }
 
 static void auth_cancel(struct bt_conn *conn)
@@ -115,7 +110,7 @@ static void auth_cancel(struct bt_conn *conn)
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
-	printk("Pairing cancelled: %s\n", addr);
+	LOG_INF("Pairing cancelled: %s\n", addr);
 }
 
 static struct bt_conn_auth_cb conn_auth_callbacks = {
@@ -146,9 +141,9 @@ static void button_changed(uint32_t button_state, uint32_t has_changed)
 		bt_lbs_send_button_state(user_button_state);
 		app_button_state = user_button_state ? true : false;
 	}
-// Step 3.1 add an extra button handling to remove bond information
+/* STEP 2.2 - Add extra button handling to remove bond information */
 
-// Step 5.2.2 Add code to advertise without using accept list. 
+/* STEP 4.2.2 Add extra button handling to advertise without using Accept List */
 	
 }
 
@@ -158,7 +153,7 @@ static int init_button(void)
 
 	err = dk_buttons_init(button_changed);
 	if (err) {
-		printk("Cannot init buttons (err: %d)\n", err);
+		LOG_INF("Cannot init buttons (err: %d)\n", err);
 	}
 
 	return err;
@@ -169,50 +164,52 @@ void main(void)
 	int blink_status = 0;
 	int err;
 
-	printk("Starting Bluetooth Peripheral LBS example\n");
+	LOG_INF("Starting Bluetooth Peripheral LBS example\n");
 
 	err = dk_leds_init();
 	if (err) {
-		printk("LEDs init failed (err %d)\n", err);
+		LOG_INF("LEDs init failed (err %d)\n", err);
 		return;
 	}
 
 	err = init_button();
 	if (err) {
-		printk("Button init failed (err %d)\n", err);
+		LOG_INF("Button init failed (err %d)\n", err);
 		return;
 	}
 	err = bt_conn_auth_cb_register(&conn_auth_callbacks);
 	if (err) {
-		printk("Failed to register authorization callbacks.\n");
+		LOG_INF("Failed to register authorization callbacks.\n");
 		return;
 	}
+	bt_conn_cb_register(&connection_callbacks);
 
 	err = bt_enable(NULL);
 	if (err) {
-		printk("Bluetooth init failed (err %d)\n", err);
+		LOG_INF("Bluetooth init failed (err %d)\n", err);
 		return;
 	}
 
-	printk("Bluetooth initialized\n");
+	LOG_INF("Bluetooth initialized\n");
 
-	//Step 2.2 add setting load function 
+	/* STEP 1.3 - Add setting load function */
 
 	err = bt_lbs_init(&lbs_callbacs);
 	if (err) {
-		printk("Failed to init LBS (err:%d)\n", err);
+		LOG_INF("Failed to init LBS (err:%d)\n", err);
 		return;
 	}
-// Step 4.4.2 submit advertise_acceptlist_work in main()
-// Step 4.4.3 remove the original code that does normal advertising 
+	/* STEP 3.4.2 - Start advertising with the Accept List */
+
+	/* STEP 3.4.3 - Remove the original code that does normal advertising */
 	err = bt_le_adv_start(BT_LE_ADV_CONN, ad, ARRAY_SIZE(ad),
 			      sd, ARRAY_SIZE(sd));
 	if (err) {
-		printk("Advertising failed to start (err %d)\n", err);
+		LOG_INF("Advertising failed to start (err %d)\n", err);
 		return;
 	}
 
-	printk("Advertising successfully started\n");
+	LOG_INF("Advertising successfully started\n");
 
 	for (;;) {
 		dk_set_led(RUN_STATUS_LED, (++blink_status) % 2);
