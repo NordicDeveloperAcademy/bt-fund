@@ -30,6 +30,11 @@ LOG_MODULE_REGISTER(Lesson4_Exercise2, LOG_LEVEL_INF);
 #define USER_LED                DK_LED3
 #define USER_BUTTON             DK_BTN1_MSK
 
+
+#define STACKSIZE 1024
+#define PRIORITY 7
+
+
 #define RUN_LED_BLINK_INTERVAL  1000
 /* STEP 17 - Define the interval at which you want to send data at */
 
