@@ -93,6 +93,19 @@ int my_lbs_send_button_state_indicate(bool button_state);
  *           Otherwise, a (negative) error code is returned.
  */
 int my_lbs_send_button_state_notify(bool button_state);
+
+/** @brief Send the sensor value as notification.
+ *
+ * This function sends an uint32_t  value, typically the value
+ * of a simulated sensor to all connected peers.
+ *
+ * @param[in] sensor_value The value of the simulated sensor.
+ *
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int my_lbs_send_sensor_notify(uint32_t sensor_value);
+
 #ifdef __cplusplus
 }
 #endif
