@@ -187,8 +187,6 @@ static void exchange_func(struct bt_conn *conn, uint8_t att_err,
     }
 }
 
-
-/* STEP 5 - Send a notification using the Battery Service */
 static void button_changed(uint32_t button_state, uint32_t has_changed)
 {
     int err;

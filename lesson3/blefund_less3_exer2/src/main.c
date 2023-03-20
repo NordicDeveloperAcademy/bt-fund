@@ -101,8 +101,6 @@ struct bt_conn_cb connection_callbacks = {
 
 /* STEP 13.3 - Implement callback function for MTU exchange */
 
-
-/* STEP 5 - Send a notification using the Battery Service */
 static void button_changed(uint32_t button_state, uint32_t has_changed)
 {
     int err;
