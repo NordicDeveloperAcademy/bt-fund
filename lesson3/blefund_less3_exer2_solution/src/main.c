@@ -187,8 +187,6 @@ static void exchange_func(struct bt_conn *conn, uint8_t att_err,
     }
 }
 
-
-/* STEP 5 - Send a notification using the Battery Service */
 static void button_changed(uint32_t button_state, uint32_t has_changed)
 {
     int err;
@@ -218,7 +216,7 @@ void main(void)
 	int blink_status = 0;
 	int err;
 
-	LOG_INF("Starting Lesson 3 - Exercise 1\n");
+	LOG_INF("Starting Lesson 3 - Exercise 2\n");
 
 	err = dk_leds_init();
 	if (err) {
