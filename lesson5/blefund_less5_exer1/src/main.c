@@ -59,10 +59,11 @@ static void on_disconnected(struct bt_conn *conn, uint8_t reason)
 
 /* STEP 5.2 Define the callback function on_security_changed() */
 
-BT_CONN_CB_DEFINE(conn_callbacks) = {
+struct bt_conn_cb connection_callbacks = {
 	.connected        = on_connected,
 	.disconnected     = on_disconnected,
 /* STEP 5.1 - Add the security_changed member to the callback structure */
+
 };
 
 /* STEP 9.1 - Define the callback function auth_passkey_display */
@@ -130,6 +131,7 @@ void main(void)
 	
 	/* STEP 10 - Register the authentication callbacks */
 
+
 	bt_conn_cb_register(&connection_callbacks);
 
 	err = bt_enable(NULL);
@@ -137,8 +139,6 @@ void main(void)
 		LOG_INF("Bluetooth init failed (err %d)\n", err);
 		return;
 	}
-
-	bt_conn_cb_register(&connection_callbacks);
 
 	err = bt_lbs_init(&lbs_callbacs);
 	if (err) {
