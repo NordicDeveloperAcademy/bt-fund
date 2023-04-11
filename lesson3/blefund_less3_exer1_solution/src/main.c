@@ -97,7 +97,7 @@ static void button_changed(uint32_t button_state, uint32_t has_changed)
 static int init_button(void)
 {
     int err;
-
+/*STEP 8.4 - Complete the implementation of the init_button() function. */
     err = dk_buttons_init(button_changed);
     if (err) {
         LOG_INF("Cannot init buttons (err: %d)", err);
