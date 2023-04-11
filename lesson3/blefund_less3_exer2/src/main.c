@@ -73,7 +73,8 @@ void on_connected(struct bt_conn *conn, uint8_t err)
     
 	 /* STEP 1.2 - Add the connection parameters to your log */
 
-	/* STEP 7 - Update the PHY mode */
+	/* STEP 7.2 - Update the PHY mode */
+	
    /* STEP 13.5 - Update the data length and MTU */
 
 }
