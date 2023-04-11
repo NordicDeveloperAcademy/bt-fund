@@ -61,12 +61,9 @@ static const struct bt_data sd[] = {
 
 static int init_button(void)
 {
-    int err;
+    int err=0;
+	/*STEP 8.4 - Complete the implementation of the init_button() function. */
 
-    err = dk_buttons_init(button_changed);
-    if (err) {
-        LOG_INF("Cannot init buttons (err: %d)", err);
-    }
 
     return err;
 }
