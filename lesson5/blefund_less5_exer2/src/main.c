@@ -54,6 +54,9 @@ static const struct bt_data sd[] = {
 
 /* STEP 3.3.2 - Define the function to loop through the bond list */
 
+
+/* STEP 3.4.1 - Define the function to advertise with the Accept List */
+
 static void on_connected(struct bt_conn *conn, uint8_t err)
 {
 	if (err) {
