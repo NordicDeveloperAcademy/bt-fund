@@ -107,7 +107,7 @@ void on_connected(struct bt_conn *conn, uint8_t err)
         return;
     }
     double connection_interval = info.le.interval*1.25; // in ms
-    uint16_t supervision_timeout = info.le.interval*10; // in ms
+    uint16_t supervision_timeout = info.le.timeout*10; // in ms
     LOG_INF("Connection parameters: interval %.2f ms, latency %d intervals, timeout %d ms", connection_interval, info.le.latency, supervision_timeout);
 
     update_phy(my_conn);
@@ -199,7 +199,7 @@ void main(void)
 	int blink_status = 0;
 	int err;
 
-	LOG_INF("Starting Lesson 3 - Exercise 1\n");
+	LOG_INF("Starting Lesson 6 - Exercise 2\n");
 
 	err = dk_leds_init();
 	if (err) {
