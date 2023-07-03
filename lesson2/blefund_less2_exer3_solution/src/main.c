@@ -49,7 +49,7 @@ void main(void)
 	int blink_status = 0;
 	int err;
 
-	LOG_INF("Starting Lesson 2 - Exercise 1 \n");
+	LOG_INF("Starting Lesson 2 - Exercise 3 \n");
 
 	err = dk_leds_init();
 	if (err) {
