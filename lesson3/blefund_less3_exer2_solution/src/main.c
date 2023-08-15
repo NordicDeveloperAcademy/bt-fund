@@ -22,7 +22,7 @@
 static struct bt_le_adv_param *adv_param = BT_LE_ADV_PARAM((BT_LE_ADV_OPT_CONNECTABLE|BT_LE_ADV_OPT_USE_IDENTITY), /* Connectable advertising and use identity address */
 		BT_GAP_ADV_FAST_INT_MIN_1, /* 0x30 units, 48 units, 30ms */
 		BT_GAP_ADV_FAST_INT_MAX_1, /* 0x60 units, 96 units, 60ms */
-		NULL); /* Set to NULL for undirected advertising*/
+		NULL); /* Set to NULL for undirected advertising */
 
 
 LOG_MODULE_REGISTER(Lesson3_Exercise2, LOG_LEVEL_INF);
@@ -155,7 +155,7 @@ void on_le_phy_updated(struct bt_conn *conn, struct bt_conn_le_phy_info *param)
 		LOG_INF("PHY updated. New PHY: Long Range");
 	}
 }
-/* STEP 13.1 - Write a callback function to inform about updates in data length*/
+/* STEP 13.1 - Write a callback function to inform about updates in data length */
 void on_le_data_len_updated(struct bt_conn *conn, struct bt_conn_le_data_len_info *info)
 {
 	uint16_t tx_len     = info->tx_max_len;

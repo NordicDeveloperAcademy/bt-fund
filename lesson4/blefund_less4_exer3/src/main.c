@@ -489,7 +489,7 @@ static void bt_receive_cb(struct bt_conn *conn, const uint8_t *const data,
 
 	}
 }
-/* STEP 8.1 - Create a variable of type bt_nus_cb and initialize it*/
+/* STEP 8.1 - Create a variable of type bt_nus_cb and initialize it */
 
 
 void error(void)
@@ -585,7 +585,7 @@ void main(void)
 	if (IS_ENABLED(CONFIG_SETTINGS)) {
 		settings_load();
 	}
-/*STEP 8.2 - Pass your application callback function to the NUS service */
+/* STEP 8.2 - Pass your application callback function to the NUS service */
 
 
 

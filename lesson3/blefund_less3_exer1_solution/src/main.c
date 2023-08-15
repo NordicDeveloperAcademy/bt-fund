@@ -31,7 +31,7 @@ struct bt_conn *my_conn = NULL;
 static struct bt_le_adv_param *adv_param = BT_LE_ADV_PARAM((BT_LE_ADV_OPT_CONNECTABLE|BT_LE_ADV_OPT_USE_IDENTITY), /* Connectable advertising and use identity address */
 		BT_GAP_ADV_FAST_INT_MIN_1, /* 0x30 units, 48 units, 30ms */
 		BT_GAP_ADV_FAST_INT_MAX_1, /* 0x60 units, 96 units, 60ms */
-		NULL); /* Set to NULL for undirected advertising*/
+		NULL); /* Set to NULL for undirected advertising */
 
 
 LOG_MODULE_REGISTER(Lesson3_Exercise1, LOG_LEVEL_INF);
@@ -97,7 +97,7 @@ static void button_changed(uint32_t button_state, uint32_t has_changed)
 static int init_button(void)
 {
 	int err;
-	/*STEP 8.4 - Complete the implementation of the init_button() function. */
+	/* STEP 8.4 - Complete the implementation of the init_button() function. */
 	err = dk_buttons_init(button_changed);
 	if (err) {
 		LOG_INF("Cannot init buttons (err: %d)", err);

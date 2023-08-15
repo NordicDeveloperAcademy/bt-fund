@@ -315,7 +315,7 @@ void main(void)
 	// 	LOG_INF("Advertising failed to start (err %d)\n", err);
 	// 	return;
 	// }
-	//LOG_INF("Advertising successfully started\n");
+	// LOG_INF("Advertising successfully started\n");
 
 	for (;;) {
 		dk_set_led(RUN_STATUS_LED, (++blink_status) % 2);

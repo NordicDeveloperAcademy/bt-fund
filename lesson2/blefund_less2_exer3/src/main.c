@@ -9,9 +9,9 @@
 #include <zephyr/logging/log.h>
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/gap.h>
-/*STEP 3.2.1 - Include the header file of the UUID helper macros and definitions */
+/* STEP 3.2.1 - Include the header file of the UUID helper macros and definitions */
 
-/*STEP 4.1 - Include the header file for managing Bluetooth LE addresses */
+/* STEP 4.1 - Include the header file for managing Bluetooth LE addresses */
 
 #include <dk_buttons_and_leds.h>
 

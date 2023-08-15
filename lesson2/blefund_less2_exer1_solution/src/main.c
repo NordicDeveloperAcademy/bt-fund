@@ -37,7 +37,7 @@ static unsigned char url_data[] ={0x17,'/','/','a','c','a','d','e','m','y','.',
 
 /* STEP 4.2.1 - Declare the scan response packet */
 static const struct bt_data sd[] = {
-	/* 4.2.3 Include the URL data in the scan response packet*/
+	/* 4.2.3 Include the URL data in the scan response packet */
 	BT_DATA(BT_DATA_URI, url_data,sizeof(url_data)),
 };
 

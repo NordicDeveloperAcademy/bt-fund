@@ -50,7 +50,7 @@ static void mylbsbc_ccc_mysensor_cfg_changed(const struct bt_gatt_attr *attr,
 	notify_mysensor_enabled = (value == BT_GATT_CCC_NOTIFY);
 }
 
-//This function is called when a remote device has acknowledged the indication at its host layer
+// This function is called when a remote device has acknowledged the indication at its host layer
 static void indicate_cb(struct bt_conn *conn,
 			struct bt_gatt_indicate_params *params, uint8_t err)
 {
@@ -75,11 +75,11 @@ static ssize_t write_led(struct bt_conn *conn,
 	}
 
 	if (lbs_cb.led_cb) {
-		//Read the received value
+		// Read the received value
 		uint8_t val = *((uint8_t *)buf);
 
 		if (val == 0x00 || val == 0x01) {
-			//Call the application callback function to update the LED state
+			// Call the application callback function to update the LED state
 			lbs_cb.led_cb(val ? true : false);
 		} else {
 			LOG_DBG("Write led: Incorrect value");
@@ -96,7 +96,7 @@ static ssize_t read_button(struct bt_conn *conn,
 			   uint16_t len,
 			   uint16_t offset)
 {
-	//get a pointer to button_state which is passed in the BT_GATT_CHARACTERISTIC() and stored in attr->user_data
+	// get a pointer to button_state which is passed in the BT_GATT_CHARACTERISTIC() and stored in attr->user_data
 	const char *value = attr->user_data;
 
 	LOG_DBG("Attribute read, handle: %u, conn: %p", attr->handle,
@@ -129,7 +129,7 @@ BT_GATT_PRIMARY_SERVICE(BT_UUID_LBS),
 			       BT_GATT_CHRC_WRITE,
 			       BT_GATT_PERM_WRITE,
 			       NULL, write_led, NULL),
-/*STEP 12 - Create and add the MYSENSOR characteristic and its CCCD  */
+/* STEP 12 - Create and add the MYSENSOR characteristic and its CCCD  */
 	BT_GATT_CHARACTERISTIC(BT_UUID_LBS_MYSENSOR,
 			       BT_GATT_CHRC_NOTIFY,
 			       BT_GATT_PERM_NONE, NULL, NULL,
@@ -157,7 +157,7 @@ int my_lbs_send_button_state_indicate(bool button_state)
 		return -EACCES;
 	}
 	ind_params.attr = &my_lbs_svc.attrs[2];
-	ind_params.func = indicate_cb; //A remote device has ACKed at its host layer (ATT ACK)
+	ind_params.func = indicate_cb; // A remote device has ACKed at its host layer (ATT ACK)
 	ind_params.destroy = NULL;
 	ind_params.data = &button_state;
 	ind_params.len = sizeof(button_state);

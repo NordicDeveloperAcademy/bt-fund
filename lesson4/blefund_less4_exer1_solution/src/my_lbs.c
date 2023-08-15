@@ -52,11 +52,11 @@ static ssize_t write_led(struct bt_conn *conn,
 	}
 
 	if (lbs_cb.led_cb) {
-		//Read the received value
+		// Read the received value
 		uint8_t val = *((uint8_t *)buf);
 
 		if (val == 0x00 || val == 0x01) {
-			//Call the application callback function to update the LED state
+			// Call the application callback function to update the LED state
 			lbs_cb.led_cb(val ? true : false);
 		} else {
 			LOG_DBG("Write led: Incorrect value");
@@ -67,14 +67,14 @@ static ssize_t write_led(struct bt_conn *conn,
 	return len;
 }
 
-/* STEP 5 - Implement the read callback function of the Button characteristic*/
+/* STEP 5 - Implement the read callback function of the Button characteristic */
 static ssize_t read_button(struct bt_conn *conn,
 			   const struct bt_gatt_attr *attr,
 			   void *buf,
 			   uint16_t len,
 			   uint16_t offset)
 {
-	//get a pointer to button_state which is passed in the BT_GATT_CHARACTERISTIC() and stored in attr->user_data
+	// get a pointer to button_state which is passed in the BT_GATT_CHARACTERISTIC() and stored in attr->user_data
 	const char *value = attr->user_data;
 
 	LOG_DBG("Attribute read, handle: %u, conn: %p", attr->handle,

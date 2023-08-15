@@ -38,7 +38,7 @@ static struct my_lbs_cb       lbs_cb;
 
 /* STEP 13 - Define the configuration change callback function for the MYSENSOR characteristic */
 
-//This function is called when a remote device has acknowledged the indication at its host layer
+// This function is called when a remote device has acknowledged the indication at its host layer
 static void indicate_cb(struct bt_conn *conn,
 			struct bt_gatt_indicate_params *params, uint8_t err)
 {
@@ -64,11 +64,11 @@ static ssize_t write_led(struct bt_conn *conn,
 	}
 
 	if (lbs_cb.led_cb) {
-		//Read the received value
+		// Read the received value
 		uint8_t val = *((uint8_t *)buf);
 
 		if (val == 0x00 || val == 0x01) {
-			//Call the application callback function to update the LED state
+			// Call the application callback function to update the LED state
 			lbs_cb.led_cb(val ? true : false);
 		} else {
 			LOG_DBG("Write led: Incorrect value");
@@ -85,7 +85,7 @@ static ssize_t read_button(struct bt_conn *conn,
 			   uint16_t len,
 			   uint16_t offset)
 {
-	//get a pointer to button_state which is passed in the BT_GATT_CHARACTERISTIC() and stored in attr->user_data
+	// get a pointer to button_state which is passed in the BT_GATT_CHARACTERISTIC() and stored in attr->user_data
 	const char *value = attr->user_data;
 
 	LOG_DBG("Attribute read, handle: %u, conn: %p", attr->handle,
@@ -117,7 +117,7 @@ BT_GATT_PRIMARY_SERVICE(BT_UUID_LBS),
 			       BT_GATT_CHRC_WRITE,
 			       BT_GATT_PERM_WRITE,
 			       NULL, write_led, NULL),
-/*STEP 12 - Create and add the MYSENSOR characteristic and its CCCD  */
+/* STEP 12 - Create and add the MYSENSOR characteristic and its CCCD  */
 
 );
 /* A function to register application callbacks for the LED and Button characteristics  */

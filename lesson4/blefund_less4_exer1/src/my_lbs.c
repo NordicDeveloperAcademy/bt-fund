@@ -35,7 +35,7 @@ static struct my_lbs_cb       lbs_cb;
 /* STEP 6 - Implement the write callback function of the LED characteristic */
 
 
-/* STEP 5 - Implement the read callback function of the Button characteristic*/
+/* STEP 5 - Implement the read callback function of the Button characteristic */
 
 
 

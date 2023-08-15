@@ -17,16 +17,16 @@
 /* STEP 2.2 - Declare the structure for your custom data  */
 typedef struct adv_mfg_data {
 	uint16_t company_code;	    /* Company Identifier Code. */
-	uint16_t number_press;      /* Number of times Button 1 is pressed*/
+	uint16_t number_press;      /* Number of times Button 1 is pressed */
 } adv_mfg_data_type;
 
 #define USER_BUTTON             DK_BTN1_MSK
 
 /* STEP 1 - Create an LE Advertising Parameters variable */
-static struct bt_le_adv_param *adv_param = BT_LE_ADV_PARAM(BT_LE_ADV_OPT_NONE, /* No options spesified*/
-		800, /*Min Advertising Interval 500ms (800*0.625ms) */
-		801, /*Max Advertising Interval 500.625ms (801*0.625ms)*/
-		NULL); /* Set to NULL for undirected advertising*/
+static struct bt_le_adv_param *adv_param = BT_LE_ADV_PARAM(BT_LE_ADV_OPT_NONE, /* No options spesified */
+		800, /* Min Advertising Interval 500ms (800*0.625ms) */
+		801, /* Max Advertising Interval 500.625ms (801*0.625ms) */
+		NULL); /* Set to NULL for undirected advertising */
 
 /* STEP 2.3 - Define and initialize a variable of type adv_mfg_data_type */
 static adv_mfg_data_type adv_mfg_data = {COMPANY_ID_CODE,0x00};
