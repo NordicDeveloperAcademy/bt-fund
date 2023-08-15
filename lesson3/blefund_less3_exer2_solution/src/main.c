@@ -158,7 +158,7 @@ void on_le_phy_updated(struct bt_conn *conn, struct bt_conn_le_phy_info *param)
 /* STEP 13.1 - Write a callback function to inform about updates in data length*/
 void on_le_data_len_updated(struct bt_conn *conn, struct bt_conn_le_data_len_info *info)
 {
-    uint16_t tx_len     = info->tx_max_len; 
+    uint16_t tx_len     = info->tx_max_len;
     uint16_t tx_time    = info->tx_max_time;
     uint16_t rx_len     = info->rx_max_len;
     uint16_t rx_time    = info->rx_max_time;
@@ -223,7 +223,7 @@ void main(void)
 		LOG_ERR("LEDs init failed (err %d)", err);
 		return;
 	}
-	
+
 	err = init_button();
 	if (err) {
 		LOG_ERR("Button init failed (err %d)", err);

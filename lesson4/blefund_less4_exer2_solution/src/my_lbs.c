@@ -75,7 +75,7 @@ static ssize_t write_led(struct bt_conn *conn,
 	}
 
 	if (lbs_cb.led_cb) {
-		//Read the received value 
+		//Read the received value
 		uint8_t val = *((uint8_t *)buf);
 
 		if (val == 0x00 || val == 0x01) {
@@ -137,7 +137,7 @@ BT_GATT_PRIMARY_SERVICE(BT_UUID_LBS),
 
 	BT_GATT_CCC(mylbsbc_ccc_mysensor_cfg_changed,
 		    BT_GATT_PERM_READ | BT_GATT_PERM_WRITE),
- 
+
 );
 /* A function to register application callbacks for the LED and Button characteristics  */
 int my_lbs_init(struct my_lbs_cb *callbacks)
@@ -171,7 +171,7 @@ int my_lbs_send_sensor_notify(uint32_t sensor_value)
 		return -EACCES;
 	}
 
-	return bt_gatt_notify(NULL, &my_lbs_svc.attrs[7], 
+	return bt_gatt_notify(NULL, &my_lbs_svc.attrs[7],
 			      &sensor_value,
 			      sizeof(sensor_value));
 }

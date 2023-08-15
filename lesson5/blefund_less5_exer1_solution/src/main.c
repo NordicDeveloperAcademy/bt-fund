@@ -170,7 +170,7 @@ void main(void)
 	}
 
 	bt_conn_cb_register(&connection_callbacks);
-	
+
 	err = bt_enable(NULL);
 	if (err) {
 		LOG_INF("Bluetooth init failed (err %d)\n", err);

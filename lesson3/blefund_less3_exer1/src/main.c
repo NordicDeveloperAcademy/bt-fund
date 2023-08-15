@@ -80,7 +80,7 @@ void main(void)
 		LOG_ERR("LEDs init failed (err %d)", err);
 		return;
 	}
-	
+
 	err = init_button();
 	if (err) {
 		LOG_INF("Button init failed (err %d)", err);

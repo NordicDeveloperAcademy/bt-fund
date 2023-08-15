@@ -54,7 +54,7 @@ struct my_lbs_cb {
 /** @brief Initialize the LBS Service.
  *
  * This function registers application callback functions with the My LBS
- * Service 
+ * Service
  *
  * @param[in] callbacks Struct containing pointers to callback functions
  *			used by the service. This pointer can be NULL

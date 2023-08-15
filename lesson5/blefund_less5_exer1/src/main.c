@@ -128,7 +128,7 @@ void main(void)
 		LOG_INF("Button init failed (err %d)\n", err);
 		return;
 	}
-	
+
 	/* STEP 10 - Register the authentication callbacks */
 
 

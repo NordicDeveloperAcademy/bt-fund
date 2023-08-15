@@ -44,7 +44,7 @@ void main(void)
     /* STEP 5 - Enable the Bluetooth LE stack */
 
 
-	
+
 	/* STEP 6 - Start advertising */
 
 

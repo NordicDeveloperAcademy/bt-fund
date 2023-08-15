@@ -182,7 +182,7 @@ void main(void)
 	}
 
 	printk("Bluetooth initialized\n");
-	
+
 	err = bt_lbs_init(&lbs_callbacs);
 	if (err) {
 		printk("Failed to init LBS (err:%d)\n", err);

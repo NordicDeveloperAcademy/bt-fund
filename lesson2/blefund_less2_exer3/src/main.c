@@ -60,7 +60,7 @@ void main(void)
 		LOG_ERR("Bluetooth init failed (err %d)\n", err);
 		return;
 	}
- 
+
 	LOG_INF("Bluetooth initialized\n");
 	/* STEP 5.2 - Start advertising */
 

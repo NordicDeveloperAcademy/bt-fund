@@ -70,11 +70,11 @@ void on_connected(struct bt_conn *conn, uint8_t err)
     my_conn = bt_conn_ref(conn);
     dk_set_led(CONNECTION_STATUS_LED, 1);
     /* STEP 1.1 - Declare a structure to store the connection parameters */
-    
+
 	 /* STEP 1.2 - Add the connection parameters to your log */
 
 	/* STEP 7.2 - Update the PHY mode */
-	
+
    /* STEP 13.5 - Update the data length and MTU */
 
 }
@@ -138,7 +138,7 @@ void main(void)
 		LOG_ERR("LEDs init failed (err %d)", err);
 		return;
 	}
-	
+
 	err = init_button();
 	if (err) {
 		LOG_ERR("Button init failed (err %d)", err);

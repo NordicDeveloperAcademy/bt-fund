@@ -64,7 +64,7 @@ static ssize_t write_led(struct bt_conn *conn,
 	}
 
 	if (lbs_cb.led_cb) {
-		//Read the received value 
+		//Read the received value
 		uint8_t val = *((uint8_t *)buf);
 
 		if (val == 0x00 || val == 0x01) {

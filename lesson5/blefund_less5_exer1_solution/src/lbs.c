@@ -100,7 +100,7 @@ BT_GATT_PRIMARY_SERVICE(BT_UUID_LBS),
 	BT_GATT_CCC(lbslc_ccc_cfg_changed,
 		    BT_GATT_PERM_READ | BT_GATT_PERM_WRITE),
 /* STEP 1.1 - Change the LED characteristic permission to require encryption */
-/* STEP 8 - Change the LED characteristic permission to require pairing with authentication */			
+/* STEP 8 - Change the LED characteristic permission to require pairing with authentication */
 	BT_GATT_CHARACTERISTIC(BT_UUID_LBS_LED,
 			       BT_GATT_CHRC_WRITE,
 			//	   BT_GATT_PERM_WRITE_ENCRYPT,

@@ -68,7 +68,7 @@ struct uart_data_t {
 };
 
 /* STEP 6.1 - Declare the FIFOs */
-static K_FIFO_DEFINE(fifo_uart_tx_data); 
+static K_FIFO_DEFINE(fifo_uart_tx_data);
 static K_FIFO_DEFINE(fifo_uart_rx_data);
 
 static const struct bt_data ad[] = {
@@ -311,7 +311,7 @@ static int uart_init(void)
 	} else {
 		return -ENOMEM;
 	}
-	// Send a welcome message over UART 
+	// Send a welcome message over UART
 	err = uart_tx(uart, tx->data, tx->len, SYS_FOREVER_MS);
 	if (err) {
 		LOG_ERR("Cannot display welcome message (err: %d)", err);

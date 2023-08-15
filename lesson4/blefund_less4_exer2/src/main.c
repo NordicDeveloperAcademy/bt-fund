@@ -78,8 +78,8 @@ static void button_changed(uint32_t button_state, uint32_t has_changed)
 {
 	if (has_changed & USER_BUTTON) {
 		uint32_t user_button_state = button_state & USER_BUTTON;
-		/*STEP 6 - Send indication on a button press*/ 
-		
+		/*STEP 6 - Send indication on a button press*/
+
 		app_button_state = user_button_state ? true : false;
 	}
 }
@@ -104,7 +104,7 @@ static void on_disconnected(struct bt_conn *conn, uint8_t reason)
 
 struct bt_conn_cb connection_callbacks = {
     .connected              = on_connected,
-    .disconnected           = on_disconnected,  
+    .disconnected           = on_disconnected,
 };
 
 static int init_button(void)

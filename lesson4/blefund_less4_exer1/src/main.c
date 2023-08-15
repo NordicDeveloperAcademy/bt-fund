@@ -88,7 +88,7 @@ static void on_disconnected(struct bt_conn *conn, uint8_t reason)
 
 struct bt_conn_cb connection_callbacks = {
     .connected              = on_connected,
-    .disconnected           = on_disconnected,  
+    .disconnected           = on_disconnected,
 };
 
 static int init_button(void)

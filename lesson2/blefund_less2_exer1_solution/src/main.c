@@ -61,7 +61,7 @@ void main(void)
 	}
 
 	LOG_INF("Bluetooth initialized\n");
-	
+
 	/* STEP 6 - Start advertising */
 	err = bt_le_adv_start(BT_LE_ADV_NCONN, ad, ARRAY_SIZE(ad),
 			      sd, ARRAY_SIZE(sd));

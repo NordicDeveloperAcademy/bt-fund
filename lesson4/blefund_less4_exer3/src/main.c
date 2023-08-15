@@ -306,7 +306,7 @@ static int uart_init(void)
 	} else {
 		return -ENOMEM;
 	}
-	// Send a welcome message over UART 
+	// Send a welcome message over UART
 	err = uart_tx(uart, tx->data, tx->len, SYS_FOREVER_MS);
 	if (err) {
 		LOG_ERR("Cannot display welcome message (err: %d)", err);

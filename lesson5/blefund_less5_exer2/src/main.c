@@ -146,7 +146,7 @@ static void button_changed(uint32_t button_state, uint32_t has_changed)
 /* STEP 2.2 - Add extra button handling to remove bond information */
 
 /* STEP 4.2.2 Add extra button handling to advertise without using Accept List */
-	
+
 }
 
 static int init_button(void)
