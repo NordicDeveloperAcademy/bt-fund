@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/bluetooth/bluetooth.h>
@@ -13,26 +12,24 @@
 
 /* STEP 2.1 - Declare the Company identifier (Company ID) */
 
-
 /* STEP 2.2 - Declare the structure for your custom data  */
 
-
-#define USER_BUTTON             DK_BTN1_MSK
+#define USER_BUTTON DK_BTN1_MSK
 
 /* STEP 1 - Create an LE Advertising Parameters variable */
 
-
 /* STEP 2.3 - Define and initialize a variable of type adv_mfg_data_type */
 
-
-static unsigned char url_data[] ={0x17,'/','/','a','c','a','d','e','m','y','.','n','o','r','d','i','c','s','e','m','i','.','c','o','m'};
+static unsigned char url_data[] = { 0x17, '/', '/', 'a', 'c', 'a', 'd', 'e', 'm',
+				    'y',  '.', 'n', 'o', 'r', 'd', 'i', 'c', 's',
+				    'e',  'm', 'i', '.', 'c', 'o', 'm' };
 LOG_MODULE_REGISTER(Lesson2_Exercise2, LOG_LEVEL_INF);
 
-#define DEVICE_NAME             CONFIG_BT_DEVICE_NAME
-#define DEVICE_NAME_LEN         (sizeof(DEVICE_NAME) - 1)
+#define DEVICE_NAME CONFIG_BT_DEVICE_NAME
+#define DEVICE_NAME_LEN (sizeof(DEVICE_NAME) - 1)
 
-#define RUN_STATUS_LED          DK_LED1
-#define RUN_LED_BLINK_INTERVAL  1000
+#define RUN_STATUS_LED DK_LED1
+#define RUN_LED_BLINK_INTERVAL 1000
 
 static const struct bt_data ad[] = {
 	BT_DATA_BYTES(BT_DATA_FLAGS, BT_LE_AD_NO_BREDR),
@@ -42,10 +39,9 @@ static const struct bt_data ad[] = {
 };
 
 static const struct bt_data sd[] = {
-	BT_DATA(BT_DATA_URI, url_data,sizeof(url_data)),
+	BT_DATA(BT_DATA_URI, url_data, sizeof(url_data)),
 };
 /* STEP 5 - Add the definition of callback function and update the advertising data dynamically */
-
 
 /* STEP 4.1 - Define the initialization function of the buttons and setup interrupt.  */
 
@@ -63,7 +59,6 @@ void main(void)
 	}
 	/* STEP 4.2 - Setup buttons on your board  */
 
-
 	err = bt_enable(NULL);
 	if (err) {
 		LOG_ERR("Bluetooth init failed (err %d)\n", err);
@@ -72,8 +67,7 @@ void main(void)
 
 	LOG_INF("Bluetooth initialized\n");
 
-	err = bt_le_adv_start(adv_param, ad, ARRAY_SIZE(ad),
-			      sd, ARRAY_SIZE(sd));
+	err = bt_le_adv_start(adv_param, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
 	if (err) {
 		LOG_ERR("Advertising failed to start (err %d)\n", err);
 		return;

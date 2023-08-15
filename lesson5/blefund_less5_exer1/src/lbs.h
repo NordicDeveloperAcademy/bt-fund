@@ -20,21 +20,18 @@ extern "C" {
 #include <zephyr/types.h>
 
 /** @brief LBS Service UUID. */
-#define BT_UUID_LBS_VAL \
-	BT_UUID_128_ENCODE(0x00001523, 0x1212, 0xefde, 0x1523, 0x785feabcd123)
+#define BT_UUID_LBS_VAL BT_UUID_128_ENCODE(0x00001523, 0x1212, 0xefde, 0x1523, 0x785feabcd123)
 
 /** @brief Button Characteristic UUID. */
-#define BT_UUID_LBS_BUTTON_VAL \
+#define BT_UUID_LBS_BUTTON_VAL                                                                     \
 	BT_UUID_128_ENCODE(0x00001524, 0x1212, 0xefde, 0x1523, 0x785feabcd123)
 
 /** @brief LED Characteristic UUID. */
-#define BT_UUID_LBS_LED_VAL \
-	BT_UUID_128_ENCODE(0x00001525, 0x1212, 0xefde, 0x1523, 0x785feabcd123)
+#define BT_UUID_LBS_LED_VAL BT_UUID_128_ENCODE(0x00001525, 0x1212, 0xefde, 0x1523, 0x785feabcd123)
 
-
-#define BT_UUID_LBS           BT_UUID_DECLARE_128(BT_UUID_LBS_VAL)
-#define BT_UUID_LBS_BUTTON    BT_UUID_DECLARE_128(BT_UUID_LBS_BUTTON_VAL)
-#define BT_UUID_LBS_LED       BT_UUID_DECLARE_128(BT_UUID_LBS_LED_VAL)
+#define BT_UUID_LBS BT_UUID_DECLARE_128(BT_UUID_LBS_VAL)
+#define BT_UUID_LBS_BUTTON BT_UUID_DECLARE_128(BT_UUID_LBS_BUTTON_VAL)
+#define BT_UUID_LBS_LED BT_UUID_DECLARE_128(BT_UUID_LBS_LED_VAL)
 
 /** @brief Callback type for when an LED state change is received. */
 typedef void (*led_cb_t)(const bool led_state);
@@ -45,7 +42,7 @@ typedef bool (*button_cb_t)(void);
 /** @brief Callback struct used by the LBS Service. */
 struct bt_lbs_cb {
 	/** LED state change callback. */
-	led_cb_t    led_cb;
+	led_cb_t led_cb;
 	/** Button read callback. */
 	button_cb_t button_cb;
 };

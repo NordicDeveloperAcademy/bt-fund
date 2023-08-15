@@ -16,16 +16,15 @@
 
 LOG_MODULE_REGISTER(Lesson5_Exercise1, LOG_LEVEL_INF);
 
-#define DEVICE_NAME             CONFIG_BT_DEVICE_NAME
-#define DEVICE_NAME_LEN         (sizeof(DEVICE_NAME) - 1)
+#define DEVICE_NAME CONFIG_BT_DEVICE_NAME
+#define DEVICE_NAME_LEN (sizeof(DEVICE_NAME) - 1)
 
+#define RUN_STATUS_LED DK_LED1
+#define CON_STATUS_LED DK_LED2
+#define USER_LED DK_LED3
+#define USER_BUTTON DK_BTN1_MSK
 
-#define RUN_STATUS_LED          DK_LED1
-#define CON_STATUS_LED          DK_LED2
-#define USER_LED                DK_LED3
-#define USER_BUTTON             DK_BTN1_MSK
-
-#define RUN_LED_BLINK_INTERVAL  1000
+#define RUN_LED_BLINK_INTERVAL 1000
 
 static bool app_button_state;
 
@@ -60,9 +59,9 @@ static void on_disconnected(struct bt_conn *conn, uint8_t reason)
 /* STEP 5.2 Define the callback function on_security_changed() */
 
 struct bt_conn_cb connection_callbacks = {
-	.connected        = on_connected,
-	.disconnected     = on_disconnected,
-/* STEP 5.1 - Add the security_changed member to the callback structure */
+	.connected = on_connected,
+	.disconnected = on_disconnected,
+	/* STEP 5.1 - Add the security_changed member to the callback structure */
 
 };
 
@@ -71,7 +70,6 @@ struct bt_conn_cb connection_callbacks = {
 /* STEP 9.2 - Define the callback function auth_cancel */
 
 /* STEP 9.3 - Declare the authenticated pairing callback structure */
-
 
 static void app_led_cb(bool led_state)
 {
@@ -84,7 +82,7 @@ static bool app_button_cb(void)
 }
 
 static struct bt_lbs_cb lbs_callbacs = {
-	.led_cb    = app_led_cb,
+	.led_cb = app_led_cb,
 	.button_cb = app_button_cb,
 };
 
@@ -131,7 +129,6 @@ void main(void)
 
 	/* STEP 10 - Register the authentication callbacks */
 
-
 	bt_conn_cb_register(&connection_callbacks);
 
 	err = bt_enable(NULL);
@@ -148,8 +145,7 @@ void main(void)
 
 	LOG_INF("Bluetooth initialized\n");
 
-	err = bt_le_adv_start(BT_LE_ADV_CONN, ad, ARRAY_SIZE(ad),
-			      sd, ARRAY_SIZE(sd));
+	err = bt_le_adv_start(BT_LE_ADV_CONN, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
 	if (err) {
 		LOG_INF("Advertising failed to start (err %d)\n", err);
 		return;

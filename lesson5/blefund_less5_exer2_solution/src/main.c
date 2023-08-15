@@ -19,34 +19,34 @@
 
 LOG_MODULE_REGISTER(Lesson5_Exercise2, LOG_LEVEL_INF);
 
-#define DEVICE_NAME             CONFIG_BT_DEVICE_NAME
-#define DEVICE_NAME_LEN         (sizeof(DEVICE_NAME) - 1)
+#define DEVICE_NAME CONFIG_BT_DEVICE_NAME
+#define DEVICE_NAME_LEN (sizeof(DEVICE_NAME) - 1)
 
-#define RUN_STATUS_LED          DK_LED1
-#define CON_STATUS_LED          DK_LED2
-#define RUN_LED_BLINK_INTERVAL  1000
+#define RUN_STATUS_LED DK_LED1
+#define CON_STATUS_LED DK_LED2
+#define RUN_LED_BLINK_INTERVAL 1000
 
-#define USER_LED                DK_LED3
+#define USER_LED DK_LED3
 
-#define USER_BUTTON             DK_BTN1_MSK
+#define USER_BUTTON DK_BTN1_MSK
 
 /* STEP 2.1 - Add extra button for bond deleting function */
 
-#define BOND_DELETE_BUTTON             DK_BTN2_MSK
+#define BOND_DELETE_BUTTON DK_BTN2_MSK
 
 /* STEP 4.2.1 - Add extra button for enablig pairing mode */
 
-#define PAIRING_BUTTON             DK_BTN3_MSK
+#define PAIRING_BUTTON DK_BTN3_MSK
 
 /* STEP 3.2.1 - Define advertising parameter for no Accept List */
-#define BT_LE_ADV_CONN_NO_ACCEPT_LIST BT_LE_ADV_PARAM(BT_LE_ADV_OPT_CONNECTABLE|BT_LE_ADV_OPT_ONE_TIME, \
-						      BT_GAP_ADV_FAST_INT_MIN_2, \
-						      BT_GAP_ADV_FAST_INT_MAX_2, NULL)
+#define BT_LE_ADV_CONN_NO_ACCEPT_LIST                                                              \
+	BT_LE_ADV_PARAM(BT_LE_ADV_OPT_CONNECTABLE | BT_LE_ADV_OPT_ONE_TIME,                        \
+			BT_GAP_ADV_FAST_INT_MIN_2, BT_GAP_ADV_FAST_INT_MAX_2, NULL)
 /* STEP 3.2.2 - Define advertising parameter for when Accept List is used */
-#define BT_LE_ADV_CONN_ACCEPT_LIST BT_LE_ADV_PARAM(BT_LE_ADV_OPT_CONNECTABLE|BT_LE_ADV_OPT_FILTER_CONN|BT_LE_ADV_OPT_ONE_TIME, \
-						   BT_GAP_ADV_FAST_INT_MIN_2, \
-						   BT_GAP_ADV_FAST_INT_MAX_2, NULL)
-
+#define BT_LE_ADV_CONN_ACCEPT_LIST                                                                 \
+	BT_LE_ADV_PARAM(BT_LE_ADV_OPT_CONNECTABLE | BT_LE_ADV_OPT_FILTER_CONN |                    \
+				BT_LE_ADV_OPT_ONE_TIME,                                            \
+			BT_GAP_ADV_FAST_INT_MIN_2, BT_GAP_ADV_FAST_INT_MAX_2, NULL)
 
 static bool app_button_state;
 
@@ -69,7 +69,8 @@ static void setup_accept_list_cb(const struct bt_bond_info *info, void *user_dat
 	}
 
 	int err = bt_le_filter_accept_list_add(&info->addr);
-	LOG_INF("Added following peer to accept list: %x %x\n",info->addr.a.val[0],info->addr.a.val[1]);
+	LOG_INF("Added following peer to accept list: %x %x\n", info->addr.a.val[0],
+		info->addr.a.val[1]);
 	if (err) {
 		LOG_INF("Cannot add peer to filter accept list (err: %d)\n", err);
 		(*bond_cnt) = -EIO;
@@ -96,25 +97,24 @@ static int setup_accept_list(uint8_t local_id)
 }
 
 /* STEP 3.4.1 - Define the function to advertise with the Accept List */
-void advertise_with_acceptlist (struct k_work *work)
+void advertise_with_acceptlist(struct k_work *work)
 {
-	int err=0;
-	int allowed_cnt= setup_accept_list(BT_ID_DEFAULT);
-	if (allowed_cnt<0){
+	int err = 0;
+	int allowed_cnt = setup_accept_list(BT_ID_DEFAULT);
+	if (allowed_cnt < 0) {
 		LOG_INF("Acceptlist setup failed (err:%d)\n", allowed_cnt);
 	} else {
-		if (allowed_cnt==0){
+		if (allowed_cnt == 0) {
 			LOG_INF("Advertising with no Accept list \n");
-			err = bt_le_adv_start(BT_LE_ADV_CONN_NO_ACCEPT_LIST, ad, ARRAY_SIZE(ad),
-					sd, ARRAY_SIZE(sd));
-		}
-		else {
-			LOG_INF("Acceptlist setup number  = %d \n",allowed_cnt);
-			err = bt_le_adv_start(BT_LE_ADV_CONN_ACCEPT_LIST, ad, ARRAY_SIZE(ad),
-				sd, ARRAY_SIZE(sd));
+			err = bt_le_adv_start(BT_LE_ADV_CONN_NO_ACCEPT_LIST, ad, ARRAY_SIZE(ad), sd,
+					      ARRAY_SIZE(sd));
+		} else {
+			LOG_INF("Acceptlist setup number  = %d \n", allowed_cnt);
+			err = bt_le_adv_start(BT_LE_ADV_CONN_ACCEPT_LIST, ad, ARRAY_SIZE(ad), sd,
+					      ARRAY_SIZE(sd));
 		}
 		if (err) {
-		 	LOG_INF("Advertising failed to start (err %d)\n", err);
+			LOG_INF("Advertising failed to start (err %d)\n", err);
 			return;
 		}
 		LOG_INF("Advertising successfully started\n");
@@ -140,11 +140,9 @@ static void on_disconnected(struct bt_conn *conn, uint8_t reason)
 	dk_set_led_off(CON_STATUS_LED);
 	/* STEP 3.5 - Start advertising with Accept List */
 	k_work_submit(&advertise_acceptlist_work);
-
 }
 
-static void on_security_changed(struct bt_conn *conn, bt_security_t level,
-				enum bt_security_err err)
+static void on_security_changed(struct bt_conn *conn, bt_security_t level, enum bt_security_err err)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
 
@@ -153,13 +151,12 @@ static void on_security_changed(struct bt_conn *conn, bt_security_t level,
 	if (!err) {
 		LOG_INF("Security changed: %s level %u\n", addr, level);
 	} else {
-		LOG_INF("Security failed: %s level %u err %d\n", addr, level,
-			err);
+		LOG_INF("Security failed: %s level %u err %d\n", addr, level, err);
 	}
 }
 struct bt_conn_cb connection_callbacks = {
-	.connected        = on_connected,
-	.disconnected     = on_disconnected,
+	.connected = on_connected,
+	.disconnected = on_disconnected,
 	.security_changed = on_security_changed,
 };
 static void auth_passkey_display(struct bt_conn *conn, unsigned int passkey)
@@ -196,7 +193,7 @@ static bool app_button_cb(void)
 }
 
 static struct bt_lbs_cb lbs_callbacs = {
-	.led_cb    = app_led_cb,
+	.led_cb = app_led_cb,
 	.button_cb = app_button_cb,
 };
 
@@ -208,24 +205,23 @@ static void button_changed(uint32_t button_state, uint32_t has_changed)
 		bt_lbs_send_button_state(user_button_state);
 		app_button_state = user_button_state ? true : false;
 	}
-/* STEP 2.2 - Add extra button handling to remove bond information */
+	/* STEP 2.2 - Add extra button handling to remove bond information */
 	if (has_changed & BOND_DELETE_BUTTON) {
 		uint32_t bond_delete_button_state = button_state & BOND_DELETE_BUTTON;
-		if (bond_delete_button_state==0) {
-			int err= bt_unpair(BT_ID_DEFAULT,BT_ADDR_LE_ANY);
+		if (bond_delete_button_state == 0) {
+			int err = bt_unpair(BT_ID_DEFAULT, BT_ADDR_LE_ANY);
 			if (err) {
 				LOG_INF("Cannot delete bond (err: %d)\n", err);
-			} else	{
+			} else {
 				LOG_INF("Bond deleted succesfully");
 			}
-
 		}
 	}
-/* STEP 4.2.2 Add extra button handling to advertise without using Accept List */
+	/* STEP 4.2.2 Add extra button handling to advertise without using Accept List */
 
 	if (has_changed & PAIRING_BUTTON) {
 		uint32_t pairing_button_state = button_state & PAIRING_BUTTON;
-		if (pairing_button_state==0) {
+		if (pairing_button_state == 0) {
 			int err_code = bt_le_adv_stop();
 			if (err_code) {
 				LOG_INF("Cannot stop advertising err= %d \n", err_code);
@@ -234,22 +230,20 @@ static void button_changed(uint32_t button_state, uint32_t has_changed)
 			err_code = bt_le_filter_accept_list_clear();
 			if (err_code) {
 				LOG_INF("Cannot clear accept list (err: %d)\n", err_code);
-			} else	{
+			} else {
 				LOG_INF("Accept list cleared succesfully");
 			}
-			err_code = bt_le_adv_start(BT_LE_ADV_CONN_NO_ACCEPT_LIST, ad, ARRAY_SIZE(ad),
-					sd, ARRAY_SIZE(sd));
+			err_code = bt_le_adv_start(BT_LE_ADV_CONN_NO_ACCEPT_LIST, ad,
+						   ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
 
 			if (err_code) {
 				LOG_INF("Cannot start open advertising (err: %d)\n", err_code);
-			} else	{
+			} else {
 				LOG_INF("Advertising in pairing mode started");
-
 			}
 		}
 	}
 }
-
 
 static int init_button(void)
 {
