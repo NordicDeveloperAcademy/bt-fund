@@ -23,7 +23,7 @@ typedef struct adv_mfg_data {
 
 /* STEP 1 - Create an LE Advertising Parameters variable */
 static struct bt_le_adv_param *adv_param =
-	BT_LE_ADV_PARAM(BT_LE_ADV_OPT_NONE, /* No options spesified */
+	BT_LE_ADV_PARAM(BT_LE_ADV_OPT_NONE, /* No options specified */
 			800, /* Min Advertising Interval 500ms (800*0.625ms) */
 			801, /* Max Advertising Interval 500.625ms (801*0.625ms) */
 			NULL); /* Set to NULL for undirected advertising */
