@@ -41,7 +41,7 @@ void main(void)
 		LOG_ERR("LEDs init failed (err %d)\n", err);
 		return;
 	}
-    /* STEP 5 - Enable the Bluetooth LE stack */
+	/* STEP 5 - Enable the Bluetooth LE stack */
 
 
 

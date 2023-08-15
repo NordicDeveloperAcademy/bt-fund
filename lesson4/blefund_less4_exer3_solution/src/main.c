@@ -99,7 +99,7 @@ static void uart_cb(const struct device *dev, struct uart_event *evt, void *user
 	case UART_TX_DONE:
 		LOG_DBG("UART_TX_DONE");
 		if ((evt->data.tx.len == 0) ||
-		    (!evt->data.tx.buf)) {
+			(!evt->data.tx.buf)) {
 			return;
 		}
 
@@ -136,7 +136,7 @@ static void uart_cb(const struct device *dev, struct uart_event *evt, void *user
 		}
 
 		if ((evt->data.rx.buf[buf->len - 1] == '\n') ||
-		    (evt->data.rx.buf[buf->len - 1] == '\r')) {
+			(evt->data.rx.buf[buf->len - 1] == '\r')) {
 			disable_req = true;
 			uart_rx_disable(uart);
 		}
@@ -489,7 +489,7 @@ static void bt_receive_cb(struct bt_conn *conn, const uint8_t *const data,
 			tx->data[tx->len] = '\n';
 			tx->len++;
 		}
-        /* STEP 8.3 - Forward the data received over Bluetooth LE to the UART peripheral */
+		/* STEP 8.3 - Forward the data received over Bluetooth LE to the UART peripheral */
 		err = uart_tx(uart, tx->data, tx->len, SYS_FOREVER_MS);
 		if (err) {
 			k_fifo_put(&fifo_uart_tx_data, tx);
@@ -626,7 +626,7 @@ void ble_write_thread(void)
 		/* Wait indefinitely for data from the UART peripheral */
 		struct uart_data_t *buf = k_fifo_get(&fifo_uart_rx_data,
 						     K_FOREVER);
-        /* Send data over Bluetooth LE to remote device(s) */
+		/* Send data over Bluetooth LE to remote device(s) */
 		if (bt_nus_send(NULL, buf->data, buf->len)) {
 			LOG_WRN("Failed to send data over BLE connection");
 		}

@@ -19,9 +19,9 @@
 
 /* STEP 5.1 - Create the advertising parameter for connectable advertising */
 static struct bt_le_adv_param *adv_param = BT_LE_ADV_PARAM((BT_LE_ADV_OPT_CONNECTABLE|BT_LE_ADV_OPT_USE_IDENTITY), /* Connectable advertising and use identity address */
-                800, /*Min Advertising Interval 500ms (800*0.625ms) */
-                801, /*Max Advertising Interval 500.625ms (801*0.625ms)*/
-                NULL); /* Set to NULL for undirected advertising*/
+		800, /*Min Advertising Interval 500ms (800*0.625ms) */
+		801, /*Max Advertising Interval 500.625ms (801*0.625ms)*/
+		NULL); /* Set to NULL for undirected advertising*/
 
 
 LOG_MODULE_REGISTER(Lesson2_Exercise3, LOG_LEVEL_INF);
@@ -58,16 +58,16 @@ void main(void)
 	}
 
 	/* STEP 4.2 - Change the random static address */
-    bt_addr_le_t addr;
-    err = bt_addr_le_from_str("FF:EE:DD:CC:BB:AA", "random", &addr);
-    if (err) {
-        printk("Invalid BT address (err %d)\n", err);
-    }
+	bt_addr_le_t addr;
+	err = bt_addr_le_from_str("FF:EE:DD:CC:BB:AA", "random", &addr);
+	if (err) {
+		printk("Invalid BT address (err %d)\n", err);
+	}
 
-    err = bt_id_create(&addr, NULL);
-    if (err < 0) {
-        printk("Creating new ID failed (err %d)\n", err);
-    }
+	err = bt_id_create(&addr, NULL);
+	if (err < 0) {
+		printk("Creating new ID failed (err %d)\n", err);
+	}
 
 	err = bt_enable(NULL);
 	if (err) {

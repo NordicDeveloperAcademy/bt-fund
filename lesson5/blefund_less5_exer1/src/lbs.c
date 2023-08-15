@@ -70,10 +70,10 @@ static ssize_t write_led(struct bt_conn *conn,
 	return len;
 }
 static ssize_t read_button(struct bt_conn *conn,
-			  const struct bt_gatt_attr *attr,
-			  void *buf,
-			  uint16_t len,
-			  uint16_t offset)
+			   const struct bt_gatt_attr *attr,
+			   void *buf,
+			   uint16_t len,
+			   uint16_t offset)
 {
 	const char *value = attr->user_data;
 

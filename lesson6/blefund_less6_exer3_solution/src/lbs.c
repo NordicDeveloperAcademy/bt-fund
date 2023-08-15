@@ -70,10 +70,10 @@ static ssize_t write_led(struct bt_conn *conn,
 	return len;
 }
 static ssize_t read_button(struct bt_conn *conn,
-			  const struct bt_gatt_attr *attr,
-			  void *buf,
-			  uint16_t len,
-			  uint16_t offset)
+			   const struct bt_gatt_attr *attr,
+			   void *buf,
+			   uint16_t len,
+			   uint16_t offset)
 {
 	const char *value = attr->user_data;
 
@@ -101,7 +101,7 @@ BT_GATT_PRIMARY_SERVICE(BT_UUID_LBS),
 		    BT_GATT_PERM_READ | BT_GATT_PERM_WRITE),
 	BT_GATT_CHARACTERISTIC(BT_UUID_LBS_LED,
 			       BT_GATT_CHRC_WRITE,
-			//	   BT_GATT_PERM_WRITE_ENCRYPT,
+			       // BT_GATT_PERM_WRITE_ENCRYPT,
 			       BT_GATT_PERM_WRITE_AUTHEN,
 			       NULL, write_led, NULL),
 );

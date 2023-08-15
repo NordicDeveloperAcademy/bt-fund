@@ -94,7 +94,7 @@ static void uart_cb(const struct device *dev, struct uart_event *evt, void *user
 	case UART_TX_DONE:
 		LOG_DBG("UART_TX_DONE");
 		if ((evt->data.tx.len == 0) ||
-		    (!evt->data.tx.buf)) {
+			(!evt->data.tx.buf)) {
 			return;
 		}
 
@@ -131,7 +131,7 @@ static void uart_cb(const struct device *dev, struct uart_event *evt, void *user
 		}
 
 		if ((evt->data.rx.buf[buf->len - 1] == '\n') ||
-		    (evt->data.rx.buf[buf->len - 1] == '\r')) {
+			(evt->data.rx.buf[buf->len - 1] == '\r')) {
 			disable_req = true;
 			uart_rx_disable(uart);
 		}
@@ -484,7 +484,7 @@ static void bt_receive_cb(struct bt_conn *conn, const uint8_t *const data,
 			tx->data[tx->len] = '\n';
 			tx->len++;
 		}
-        /* STEP 8.3 - Forward the data received over Bluetooth LE to the UART peripheral */
+		/* STEP 8.3 - Forward the data received over Bluetooth LE to the UART peripheral */
 
 
 	}

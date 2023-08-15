@@ -59,7 +59,7 @@ static void on_disconnected(struct bt_conn *conn, uint8_t reason)
 
 /* STEP 5.2 Define the callback function security_changed() */
 static void on_security_changed(struct bt_conn *conn, bt_security_t level,
-			     enum bt_security_err err)
+				enum bt_security_err err)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
 

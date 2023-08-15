@@ -29,9 +29,9 @@ struct bt_conn *my_conn = NULL;
 
 
 static struct bt_le_adv_param *adv_param = BT_LE_ADV_PARAM((BT_LE_ADV_OPT_CONNECTABLE|BT_LE_ADV_OPT_USE_IDENTITY), /* Connectable advertising and use identity address */
-                BT_GAP_ADV_FAST_INT_MIN_1, /* 0x30 units, 48 units, 30ms */
-                BT_GAP_ADV_FAST_INT_MAX_1, /* 0x60 units, 96 units, 60ms */
-                NULL); /* Set to NULL for undirected advertising*/
+		BT_GAP_ADV_FAST_INT_MIN_1, /* 0x30 units, 48 units, 30ms */
+		BT_GAP_ADV_FAST_INT_MAX_1, /* 0x60 units, 96 units, 60ms */
+		NULL); /* Set to NULL for undirected advertising*/
 
 
 LOG_MODULE_REGISTER(Lesson3_Exercise1, LOG_LEVEL_INF);
@@ -61,11 +61,11 @@ static const struct bt_data sd[] = {
 
 static int init_button(void)
 {
-    int err=0;
+	int err=0;
 	/*STEP 8.4 - Complete the implementation of the init_button() function. */
 
 
-    return err;
+	return err;
 }
 
 void main(void)
@@ -87,7 +87,7 @@ void main(void)
 		return;
 	}
 
-    /* STEP 2.3 - Register our custom callbacks */
+	/* STEP 2.3 - Register our custom callbacks */
 
 	err = bt_enable(NULL);
 	if (err) {

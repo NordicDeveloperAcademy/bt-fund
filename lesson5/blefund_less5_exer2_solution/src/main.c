@@ -40,12 +40,12 @@ LOG_MODULE_REGISTER(Lesson5_Exercise2, LOG_LEVEL_INF);
 
 /* STEP 3.2.1 - Define advertising parameter for no Accept List */
 #define BT_LE_ADV_CONN_NO_ACCEPT_LIST BT_LE_ADV_PARAM(BT_LE_ADV_OPT_CONNECTABLE|BT_LE_ADV_OPT_ONE_TIME, \
-				       BT_GAP_ADV_FAST_INT_MIN_2, \
-				       BT_GAP_ADV_FAST_INT_MAX_2, NULL)
+						      BT_GAP_ADV_FAST_INT_MIN_2, \
+						      BT_GAP_ADV_FAST_INT_MAX_2, NULL)
 /* STEP 3.2.2 - Define advertising parameter for when Accept List is used */
 #define BT_LE_ADV_CONN_ACCEPT_LIST BT_LE_ADV_PARAM(BT_LE_ADV_OPT_CONNECTABLE|BT_LE_ADV_OPT_FILTER_CONN|BT_LE_ADV_OPT_ONE_TIME, \
-				       BT_GAP_ADV_FAST_INT_MIN_2, \
-				       BT_GAP_ADV_FAST_INT_MAX_2, NULL)
+						   BT_GAP_ADV_FAST_INT_MIN_2, \
+						   BT_GAP_ADV_FAST_INT_MAX_2, NULL)
 
 
 static bool app_button_state;
@@ -144,7 +144,7 @@ static void on_disconnected(struct bt_conn *conn, uint8_t reason)
 }
 
 static void on_security_changed(struct bt_conn *conn, bt_security_t level,
-			     enum bt_security_err err)
+				enum bt_security_err err)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
 
@@ -310,7 +310,7 @@ void main(void)
 
 	/* STEP 3.4.3 - Remove the original code that does normal advertising */
 	// err = bt_le_adv_start(BT_LE_ADV_CONN, ad, ARRAY_SIZE(ad),
-	// 		      sd, ARRAY_SIZE(sd));
+	// 			 sd, ARRAY_SIZE(sd));
 	// if (err) {
 	// 	LOG_INF("Advertising failed to start (err %d)\n", err);
 	// 	return;

@@ -18,9 +18,9 @@
 #include "my_lbs.h"
 
 static struct bt_le_adv_param *adv_param = BT_LE_ADV_PARAM((BT_LE_ADV_OPT_CONNECTABLE|BT_LE_ADV_OPT_USE_IDENTITY), /* Connectable advertising and use identity address */
-                800, /*Min Advertising Interval 500ms (800*0.625ms) */
-                801, /*Max Advertising Interval 500.625ms (801*0.625ms)*/
-                NULL); /* Set to NULL for undirected advertising*/
+		800, /*Min Advertising Interval 500ms (800*0.625ms) */
+		801, /*Max Advertising Interval 500.625ms (801*0.625ms)*/
+		NULL); /* Set to NULL for undirected advertising*/
 
 
 LOG_MODULE_REGISTER(Lesson4_Exercise1, LOG_LEVEL_INF);
@@ -96,8 +96,8 @@ static void on_disconnected(struct bt_conn *conn, uint8_t reason)
 }
 
 struct bt_conn_cb connection_callbacks = {
-    .connected              = on_connected,
-    .disconnected           = on_disconnected,
+	.connected              = on_connected,
+	.disconnected           = on_disconnected,
 };
 
 static int init_button(void)
@@ -136,7 +136,7 @@ void main(void)
 		LOG_ERR("Bluetooth init failed (err %d)\n", err);
 		return;
 	}
-    bt_conn_cb_register(&connection_callbacks);
+	bt_conn_cb_register(&connection_callbacks);
 
 	/* STEP 11 - Pass your application callback functions stored in app_callbacks to the MY LBS service */
 	err = my_lbs_init(&app_callbacks);
