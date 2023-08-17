@@ -39,7 +39,7 @@ LOG_MODULE_REGISTER(Lesson4_Exercise3, LOG_LEVEL_INF);
 #define PRIORITY 7
 
 #define DEVICE_NAME CONFIG_BT_DEVICE_NAME
-#define DEVICE_NAME_LEN	(sizeof(DEVICE_NAME) - 1)
+#define DEVICE_NAME_LEN (sizeof(DEVICE_NAME) - 1)
 
 #define RUN_STATUS_LED DK_LED1
 #define RUN_LED_BLINK_INTERVAL 1000
@@ -68,7 +68,7 @@ struct uart_data_t {
 };
 
 /* STEP 6.1 - Declare the FIFOs */
-static K_FIFO_DEFINE(fifo_uart_tx_data); 
+static K_FIFO_DEFINE(fifo_uart_tx_data);
 static K_FIFO_DEFINE(fifo_uart_rx_data);
 
 static const struct bt_data ad[] = {
@@ -98,19 +98,16 @@ static void uart_cb(const struct device *dev, struct uart_event *evt, void *user
 	switch (evt->type) {
 	case UART_TX_DONE:
 		LOG_DBG("UART_TX_DONE");
-		if ((evt->data.tx.len == 0) ||
-		    (!evt->data.tx.buf)) {
+		if ((evt->data.tx.len == 0) || (!evt->data.tx.buf)) {
 			return;
 		}
 
 		if (aborted_buf) {
-			buf = CONTAINER_OF(aborted_buf, struct uart_data_t,
-					   data);
+			buf = CONTAINER_OF(aborted_buf, struct uart_data_t, data);
 			aborted_buf = NULL;
 			aborted_len = 0;
 		} else {
-			buf = CONTAINER_OF(evt->data.tx.buf, struct uart_data_t,
-					   data);
+			buf = CONTAINER_OF(evt->data.tx.buf, struct uart_data_t, data);
 		}
 
 		k_free(buf);
@@ -156,8 +153,7 @@ static void uart_cb(const struct device *dev, struct uart_event *evt, void *user
 			return;
 		}
 
-		uart_rx_enable(uart, buf->data, sizeof(buf->data),
-			       UART_WAIT_FOR_RX);
+		uart_rx_enable(uart, buf->data, sizeof(buf->data), UART_WAIT_FOR_RX);
 
 		break;
 
@@ -175,8 +171,7 @@ static void uart_cb(const struct device *dev, struct uart_event *evt, void *user
 
 	case UART_RX_BUF_RELEASED:
 		LOG_DBG("UART_RX_BUF_RELEASED");
-		buf = CONTAINER_OF(evt->data.rx_buf.buf, struct uart_data_t,
-				   data);
+		buf = CONTAINER_OF(evt->data.rx_buf.buf, struct uart_data_t, data);
 
 		if (buf->len > 0) {
 			/* STEP 9.1 -  Push the data received from the UART peripheral into the fifo_uart_rx_data FIFO */
@@ -194,11 +189,9 @@ static void uart_cb(const struct device *dev, struct uart_event *evt, void *user
 		}
 
 		aborted_len += evt->data.tx.len;
-		buf = CONTAINER_OF(aborted_buf, struct uart_data_t,
-				   data);
+		buf = CONTAINER_OF(aborted_buf, struct uart_data_t, data);
 
-		uart_tx(uart, &buf->data[aborted_len],
-			buf->len - aborted_len, SYS_FOREVER_MS);
+		uart_tx(uart, &buf->data[aborted_len], buf->len - aborted_len, SYS_FOREVER_MS);
 
 		break;
 
@@ -225,8 +218,7 @@ static void uart_work_handler(struct k_work *item)
 
 static bool uart_test_async_api(const struct device *dev)
 {
-	const struct uart_driver_api *api =
-			(const struct uart_driver_api *)dev->api;
+	const struct uart_driver_api *api = (const struct uart_driver_api *)dev->api;
 
 	return (api->callback_set != NULL);
 }
@@ -258,7 +250,6 @@ static int uart_init(void)
 	}
 
 	k_work_init_delayable(&uart_work, uart_work_handler);
-
 
 	if (IS_ENABLED(CONFIG_BT_NUS_UART_ASYNC_ADAPTER) && !uart_test_async_api(uart)) {
 		/* Implement API adapter */
@@ -311,7 +302,7 @@ static int uart_init(void)
 	} else {
 		return -ENOMEM;
 	}
-	// Send a welcome message over UART 
+	// Send a welcome message over UART
 	err = uart_tx(uart, tx->data, tx->len, SYS_FOREVER_MS);
 	if (err) {
 		LOG_ERR("Cannot display welcome message (err: %d)", err);
@@ -359,8 +350,7 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 }
 
 #ifdef CONFIG_BT_NUS_SECURITY_ENABLED
-static void security_changed(struct bt_conn *conn, bt_security_t level,
-			     enum bt_security_err err)
+static void security_changed(struct bt_conn *conn, bt_security_t level, enum bt_security_err err)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
 
@@ -369,14 +359,13 @@ static void security_changed(struct bt_conn *conn, bt_security_t level,
 	if (!err) {
 		LOG_INF("Security changed: %s level %u", addr, level);
 	} else {
-		LOG_WRN("Security failed: %s level %u err %d", addr,
-			level, err);
+		LOG_WRN("Security failed: %s level %u err %d", addr, level, err);
 	}
 }
 #endif
 
 BT_CONN_CB_DEFINE(conn_callbacks) = {
-	.connected    = connected,
+	.connected = connected,
 	.disconnected = disconnected,
 #ifdef CONFIG_BT_NUS_SECURITY_ENABLED
 	.security_changed = security_changed,
@@ -405,7 +394,6 @@ static void auth_passkey_confirm(struct bt_conn *conn, unsigned int passkey)
 	LOG_INF("Press Button 1 to confirm, Button 2 to reject.");
 }
 
-
 static void auth_cancel(struct bt_conn *conn)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
@@ -414,7 +402,6 @@ static void auth_cancel(struct bt_conn *conn)
 
 	LOG_INF("Pairing cancelled: %s", addr);
 }
-
 
 static void pairing_complete(struct bt_conn *conn, bool bonded)
 {
@@ -425,7 +412,6 @@ static void pairing_complete(struct bt_conn *conn, bool bonded)
 	LOG_INF("Pairing completed: %s, bonded: %d", addr, bonded);
 }
 
-
 static void pairing_failed(struct bt_conn *conn, enum bt_security_err reason)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
@@ -435,27 +421,24 @@ static void pairing_failed(struct bt_conn *conn, enum bt_security_err reason)
 	LOG_INF("Pairing failed conn: %s, reason %d", addr, reason);
 }
 
-
 static struct bt_conn_auth_cb conn_auth_callbacks = {
 	.passkey_display = auth_passkey_display,
 	.passkey_confirm = auth_passkey_confirm,
 	.cancel = auth_cancel,
 };
 
-static struct bt_conn_auth_info_cb conn_auth_info_callbacks = {
-	.pairing_complete = pairing_complete,
-	.pairing_failed = pairing_failed
-};
+static struct bt_conn_auth_info_cb conn_auth_info_callbacks = { .pairing_complete =
+									pairing_complete,
+								.pairing_failed = pairing_failed };
 #else
 static struct bt_conn_auth_cb conn_auth_callbacks;
 static struct bt_conn_auth_info_cb conn_auth_info_callbacks;
 #endif
 
-static void bt_receive_cb(struct bt_conn *conn, const uint8_t *const data,
-			  uint16_t len)
+static void bt_receive_cb(struct bt_conn *conn, const uint8_t *const data, uint16_t len)
 {
 	int err;
-	char addr[BT_ADDR_LE_STR_LEN] = {0};
+	char addr[BT_ADDR_LE_STR_LEN] = { 0 };
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, ARRAY_SIZE(addr));
 
@@ -489,14 +472,14 @@ static void bt_receive_cb(struct bt_conn *conn, const uint8_t *const data,
 			tx->data[tx->len] = '\n';
 			tx->len++;
 		}
-        /* STEP 8.3 - Forward the data received over Bluetooth LE to the UART peripheral */
+		/* STEP 8.3 - Forward the data received over Bluetooth LE to the UART peripheral */
 		err = uart_tx(uart, tx->data, tx->len, SYS_FOREVER_MS);
 		if (err) {
 			k_fifo_put(&fifo_uart_tx_data, tx);
 		}
 	}
 }
-/* STEP 8.1 - Create a variable of type bt_nus_cb and initialize it*/
+/* STEP 8.1 - Create a variable of type bt_nus_cb and initialize it */
 static struct bt_nus_cb nus_cb = {
 	.received = bt_receive_cb,
 };
@@ -597,15 +580,14 @@ void main(void)
 	if (IS_ENABLED(CONFIG_SETTINGS)) {
 		settings_load();
 	}
-/* STEP 8.2 - Pass your application callback function to the NUS service */
+	/* STEP 8.2 - Pass your application callback function to the NUS service */
 	err = bt_nus_init(&nus_cb);
 	if (err) {
 		LOG_ERR("Failed to initialize UART service (err: %d)", err);
 		return;
 	}
 
-	err = bt_le_adv_start(BT_LE_ADV_CONN, ad, ARRAY_SIZE(ad), sd,
-			      ARRAY_SIZE(sd));
+	err = bt_le_adv_start(BT_LE_ADV_CONN, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
 	if (err) {
 		LOG_ERR("Advertising failed to start (err %d)", err);
 		return;
@@ -624,9 +606,8 @@ void ble_write_thread(void)
 
 	for (;;) {
 		/* Wait indefinitely for data from the UART peripheral */
-		struct uart_data_t *buf = k_fifo_get(&fifo_uart_rx_data,
-						     K_FOREVER);
-        /* Send data over Bluetooth LE to remote device(s) */
+		struct uart_data_t *buf = k_fifo_get(&fifo_uart_rx_data, K_FOREVER);
+		/* Send data over Bluetooth LE to remote device(s) */
 		if (bt_nus_send(NULL, buf->data, buf->len)) {
 			LOG_WRN("Failed to send data over BLE connection");
 		}
@@ -635,5 +616,4 @@ void ble_write_thread(void)
 	}
 }
 /* STEP 9.2 - Create a dedicated thread for sending the data over Bluetooth LE. */
-K_THREAD_DEFINE(ble_write_thread_id, STACKSIZE, ble_write_thread, NULL, NULL,
-		NULL, PRIORITY, 0, 0);
+K_THREAD_DEFINE(ble_write_thread_id, STACKSIZE, ble_write_thread, NULL, NULL, NULL, PRIORITY, 0, 0);

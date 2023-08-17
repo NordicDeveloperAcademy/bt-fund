@@ -14,7 +14,6 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(uart_async_adapter);
 
-
 #if !IS_ENABLED(CONFIG_UART_ASYNC_API)
 #error "This adapter requires UART ASYNC API to be enabled"
 #endif
@@ -22,7 +21,6 @@ LOG_MODULE_REGISTER(uart_async_adapter);
 #if !IS_ENABLED(CONFIG_UART_INTERRUPT_DRIVEN)
 #error "The adapter requires UART INTERRUPT API to be enabled"
 #endif
-
 
 /**
  * @brief Access the data inside device
@@ -66,18 +64,16 @@ static int callback_set(const struct device *dev, uart_callback_t callback, void
 
 static inline void notify_rx_buffer(const struct device *dev)
 {
-	struct uart_event event = {UART_RX_RDY};
+	struct uart_event event = { UART_RX_RDY };
 	struct uart_async_adapter_data *data = access_dev_data(dev);
 	bool notify = false;
 
 	k_spinlock_key_t key = k_spin_lock(&(data->lock));
 
 	if (data->rx.buf) {
-
 		__ASSERT_NO_MSG(data->rx.curr_buf >= data->rx.buf);
 		__ASSERT_NO_MSG(data->rx.curr_buf >= data->rx.last_notify_buf);
 		if (data->rx.curr_buf > data->rx.last_notify_buf) {
-
 			event.data.rx.buf = data->rx.buf;
 			event.data.rx.len = data->rx.curr_buf - data->rx.last_notify_buf;
 			event.data.rx.offset = data->rx.last_notify_buf - data->rx.buf;
@@ -97,10 +93,7 @@ static inline void notify_rx_buffer(const struct device *dev)
 
 static inline void notify_rx_buffer_release(const struct device *dev, uint8_t *buf)
 {
-	struct uart_event event = {
-		.type = UART_RX_BUF_RELEASED,
-		.data.rx_buf.buf = buf
-	};
+	struct uart_event event = { .type = UART_RX_BUF_RELEASED, .data.rx_buf.buf = buf };
 	LOG_DBG("Notification: UART_RX_BUF_RELEASED");
 	user_callback(dev, &event);
 }
@@ -177,7 +170,7 @@ static int tx(const struct device *dev, const uint8_t *buf, size_t len, int32_t 
 static int tx_abort(const struct device *dev)
 {
 	int ret = 0;
-	struct uart_event event = {UART_TX_ABORTED};
+	struct uart_event event = { UART_TX_ABORTED };
 	struct uart_async_adapter_data *data = access_dev_data(dev);
 
 	data->tx.enabled = false;
@@ -205,7 +198,6 @@ static int tx_abort(const struct device *dev)
 	}
 	return ret;
 }
-
 
 static int rx_enable(const struct device *dev, uint8_t *buf, size_t len, int32_t timeout)
 {
@@ -256,7 +248,7 @@ static int rx_disable(const struct device *dev)
 {
 	int ret = 0;
 	struct uart_async_adapter_data *data = access_dev_data(dev);
-	struct uart_event event_disabled = {UART_RX_DISABLED};
+	struct uart_event event_disabled = { UART_RX_DISABLED };
 
 	data->rx.enabled = false;
 	uart_irq_rx_disable(data->target);
@@ -332,7 +324,6 @@ static int config_get(const struct device *dev, struct uart_config *cfg)
 	return uart_config_get(data->target, cfg);
 }
 
-
 #ifdef CONFIG_UART_LINE_CTRL
 
 static int line_ctrl_set(const struct device *dev, uint32_t ctrl, uint32_t val)
@@ -405,7 +396,7 @@ static inline void on_tx_complete(const struct device *dev, struct uart_async_ad
 {
 	LOG_DBG("%s: Enter(%s)", __func__, dev->name);
 	if (!data->tx.size_left) {
-		struct uart_event event = {UART_TX_DONE};
+		struct uart_event event = { UART_TX_DONE };
 
 		data->tx.enabled = false;
 		uart_irq_tx_disable(data->target);
@@ -497,14 +488,10 @@ static inline void on_rx_ready(const struct device *dev, struct uart_async_adapt
 	LOG_DBG("%s: Exit", __func__);
 }
 
-static inline void on_error(const struct device *dev,
-			    struct uart_async_adapter_data *data,
+static inline void on_error(const struct device *dev, struct uart_async_adapter_data *data,
 			    int rx_err)
 {
-	struct uart_event event = {
-		.type = UART_RX_STOPPED,
-		.data.rx_stop.reason = rx_err
-	};
+	struct uart_event event = { .type = UART_RX_STOPPED, .data.rx_stop.reason = rx_err };
 
 	LOG_DBG("%s: Enter(%s)", __func__, dev->name);
 	rx_disable(data->target);
@@ -518,7 +505,7 @@ static void uart_irq_handler(const struct device *target_dev, void *context)
 	struct uart_async_adapter_data *data = access_dev_data(dev);
 
 	__ASSERT(target_dev == data->target,
-		"IRQ handler called with a context that seems uninitialized.");
+		 "IRQ handler called with a context that seems uninitialized.");
 	LOG_DBG("irq_handler: Enter");
 	if (uart_irq_update(target_dev) && uart_irq_is_pending(target_dev)) {
 		if (data->tx.enabled && uart_irq_tx_ready(target_dev)) {
@@ -566,10 +553,9 @@ const struct uart_driver_api uart_async_adapter_driver_api = {
 #endif
 
 #ifdef CONFIG_UART_DRV_CMD
-	.drv_cmd = drv_cmd
+				 .drv_cmd = drv_cmd
 #endif
 };
-
 
 static void tx_timeout(struct k_timer *timer)
 {
@@ -590,7 +576,7 @@ void uart_async_adapter_init(const struct device *dev, const struct device *targ
 	__ASSERT_NO_MSG(dev);
 	__ASSERT_NO_MSG(dev->api);
 	__ASSERT(dev->api == &uart_async_adapter_driver_api,
-		"This is not uart_async_adapter device");
+		 "This is not uart_async_adapter device");
 
 	struct uart_async_adapter_data *data = access_dev_data(dev);
 

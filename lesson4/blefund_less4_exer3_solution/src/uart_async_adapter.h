@@ -23,7 +23,6 @@
 #include <zephyr/drivers/uart.h>
 #include <zephyr/kernel.h>
 
-
 /**
  * @brief UART asynch adapter data structure
  *
@@ -101,15 +100,15 @@ extern const struct uart_driver_api uart_async_adapter_driver_api;
  *
  * @name _dev The name of the created device instance
  */
-#define UART_ASYNC_ADAPTER_INST_DEFINE(_dev) \
-	static struct uart_async_adapter_data UART_ASYNC_ADAPTER_INST_DATA_NAME(_dev); \
-	static struct device_state UART_ASYNC_ADAPTER_INST_STATE_NAME(_dev); \
-	static const struct device UART_ASYNC_ADAPTER_INST_NAME(_dev) = { \
-		.name = STRINGIFY(_dev), \
-		.api = &uart_async_adapter_driver_api, \
-		.state = &UART_ASYNC_ADAPTER_INST_STATE_NAME(_dev), \
-		.data = &UART_ASYNC_ADAPTER_INST_DATA_NAME(_dev), \
-	}; \
+#define UART_ASYNC_ADAPTER_INST_DEFINE(_dev)                                                       \
+	static struct uart_async_adapter_data UART_ASYNC_ADAPTER_INST_DATA_NAME(_dev);             \
+	static struct device_state UART_ASYNC_ADAPTER_INST_STATE_NAME(_dev);                       \
+	static const struct device UART_ASYNC_ADAPTER_INST_NAME(_dev) = {                          \
+		.name = STRINGIFY(_dev),                                                           \
+		.api = &uart_async_adapter_driver_api,                                             \
+		.state = &UART_ASYNC_ADAPTER_INST_STATE_NAME(_dev),                                \
+		.data = &UART_ASYNC_ADAPTER_INST_DATA_NAME(_dev),                                  \
+	};                                                                                         \
 	static const struct device *const _dev = &UART_ASYNC_ADAPTER_INST_NAME(_dev)
 
 /**

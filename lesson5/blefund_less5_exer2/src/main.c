@@ -16,20 +16,18 @@
 
 /* STEP 1.2 - Add the header file for the Settings module */
 
-
 LOG_MODULE_REGISTER(Lesson5_Exercise2, LOG_LEVEL_INF);
 
-#define DEVICE_NAME             CONFIG_BT_DEVICE_NAME
-#define DEVICE_NAME_LEN         (sizeof(DEVICE_NAME) - 1)
+#define DEVICE_NAME CONFIG_BT_DEVICE_NAME
+#define DEVICE_NAME_LEN (sizeof(DEVICE_NAME) - 1)
 
+#define RUN_STATUS_LED DK_LED1
+#define CON_STATUS_LED DK_LED2
+#define RUN_LED_BLINK_INTERVAL 1000
 
-#define RUN_STATUS_LED          DK_LED1
-#define CON_STATUS_LED          DK_LED2
-#define RUN_LED_BLINK_INTERVAL  1000
+#define USER_LED DK_LED3
 
-#define USER_LED                DK_LED3
-
-#define USER_BUTTON             DK_BTN1_MSK
+#define USER_BUTTON DK_BTN1_MSK
 
 /* STEP 2.1 - Add extra button for bond deleting function */
 
@@ -54,7 +52,6 @@ static const struct bt_data sd[] = {
 
 /* STEP 3.3.2 - Define the function to loop through the bond list */
 
-
 /* STEP 3.4.1 - Define the function to advertise with the Accept List */
 
 static void on_connected(struct bt_conn *conn, uint8_t err)
@@ -74,11 +71,9 @@ static void on_disconnected(struct bt_conn *conn, uint8_t reason)
 	LOG_INF("Disconnected (reason %u)\n", reason);
 	dk_set_led_off(CON_STATUS_LED);
 	/* STEP 3.5 - Start advertising with Accept List */
-
 }
 
-static void on_security_changed(struct bt_conn *conn, bt_security_t level,
-			     enum bt_security_err err)
+static void on_security_changed(struct bt_conn *conn, bt_security_t level, enum bt_security_err err)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
 
@@ -87,13 +82,12 @@ static void on_security_changed(struct bt_conn *conn, bt_security_t level,
 	if (!err) {
 		LOG_INF("Security changed: %s level %u\n", addr, level);
 	} else {
-		LOG_INF("Security failed: %s level %u err %d\n", addr, level,
-			err);
+		LOG_INF("Security failed: %s level %u err %d\n", addr, level, err);
 	}
 }
 struct bt_conn_cb connection_callbacks = {
-	.connected        = on_connected,
-	.disconnected     = on_disconnected,
+	.connected = on_connected,
+	.disconnected = on_disconnected,
 	.security_changed = on_security_changed,
 };
 
@@ -131,7 +125,7 @@ static bool app_button_cb(void)
 }
 
 static struct bt_lbs_cb lbs_callbacs = {
-	.led_cb    = app_led_cb,
+	.led_cb = app_led_cb,
 	.button_cb = app_button_cb,
 };
 
@@ -143,10 +137,9 @@ static void button_changed(uint32_t button_state, uint32_t has_changed)
 		bt_lbs_send_button_state(user_button_state);
 		app_button_state = user_button_state ? true : false;
 	}
-/* STEP 2.2 - Add extra button handling to remove bond information */
+	/* STEP 2.2 - Add extra button handling to remove bond information */
 
-/* STEP 4.2.2 Add extra button handling to advertise without using Accept List */
-	
+	/* STEP 4.2.2 Add extra button handling to advertise without using Accept List */
 }
 
 static int init_button(void)
@@ -204,8 +197,7 @@ void main(void)
 	/* STEP 3.4.2 - Start advertising with the Accept List */
 
 	/* STEP 3.4.3 - Remove the original code that does normal advertising */
-	err = bt_le_adv_start(BT_LE_ADV_CONN, ad, ARRAY_SIZE(ad),
-			      sd, ARRAY_SIZE(sd));
+	err = bt_le_adv_start(BT_LE_ADV_CONN, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
 	if (err) {
 		LOG_INF("Advertising failed to start (err %d)\n", err);
 		return;

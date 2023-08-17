@@ -28,30 +28,23 @@
 
 LOG_MODULE_DECLARE(Lesson4_Exercise1);
 
-
-static bool                   button_state;
-static struct my_lbs_cb       lbs_cb;
+static bool button_state;
+static struct my_lbs_cb lbs_cb;
 
 /* STEP 6 - Implement the write callback function of the LED characteristic */
 
-
-/* STEP 5 - Implement the read callback function of the Button characteristic*/
-
-
+/* STEP 5 - Implement the read callback function of the Button characteristic */
 
 /* LED Button Service Declaration */
 /* STEP 2 - Create and add the MY LBS service to the Bluetooth LE stack */
-
 
 /* A function to register application callbacks for the LED and Button characteristics  */
 int my_lbs_init(struct my_lbs_cb *callbacks)
 {
 	if (callbacks) {
-		lbs_cb.led_cb    = callbacks->led_cb;
+		lbs_cb.led_cb = callbacks->led_cb;
 		lbs_cb.button_cb = callbacks->button_cb;
 	}
 
 	return 0;
 }
-
-

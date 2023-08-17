@@ -16,16 +16,15 @@
 
 LOG_MODULE_REGISTER(Lesson5_Exercise1, LOG_LEVEL_INF);
 
-#define DEVICE_NAME             CONFIG_BT_DEVICE_NAME
-#define DEVICE_NAME_LEN         (sizeof(DEVICE_NAME) - 1)
+#define DEVICE_NAME CONFIG_BT_DEVICE_NAME
+#define DEVICE_NAME_LEN (sizeof(DEVICE_NAME) - 1)
 
+#define RUN_STATUS_LED DK_LED1
+#define CON_STATUS_LED DK_LED2
+#define USER_LED DK_LED3
+#define USER_BUTTON DK_BTN1_MSK
 
-#define RUN_STATUS_LED          DK_LED1
-#define CON_STATUS_LED          DK_LED2
-#define USER_LED                DK_LED3
-#define USER_BUTTON             DK_BTN1_MSK
-
-#define RUN_LED_BLINK_INTERVAL  1000
+#define RUN_LED_BLINK_INTERVAL 1000
 
 static bool app_button_state;
 
@@ -58,8 +57,7 @@ static void on_disconnected(struct bt_conn *conn, uint8_t reason)
 }
 
 /* STEP 5.2 Define the callback function security_changed() */
-static void on_security_changed(struct bt_conn *conn, bt_security_t level,
-			     enum bt_security_err err)
+static void on_security_changed(struct bt_conn *conn, bt_security_t level, enum bt_security_err err)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
 
@@ -68,14 +66,13 @@ static void on_security_changed(struct bt_conn *conn, bt_security_t level,
 	if (!err) {
 		LOG_INF("Security changed: %s level %u\n", addr, level);
 	} else {
-		LOG_INF("Security failed: %s level %u err %d\n", addr, level,
-			err);
+		LOG_INF("Security failed: %s level %u err %d\n", addr, level, err);
 	}
 }
 struct bt_conn_cb connection_callbacks = {
-	.connected        = on_connected,
-	.disconnected     = on_disconnected,
-/* STEP 5.1 - Add the security_changed member to the callback structure */
+	.connected = on_connected,
+	.disconnected = on_disconnected,
+	/* STEP 5.1 - Add the security_changed member to the callback structure */
 	.security_changed = on_security_changed,
 };
 
@@ -105,7 +102,6 @@ static struct bt_conn_auth_cb conn_auth_callbacks = {
 	.cancel = auth_cancel,
 };
 
-
 static void app_led_cb(bool led_state)
 {
 	dk_set_led(USER_LED, led_state);
@@ -117,7 +113,7 @@ static bool app_button_cb(void)
 }
 
 static struct bt_lbs_cb lbs_callbacs = {
-	.led_cb    = app_led_cb,
+	.led_cb = app_led_cb,
 	.button_cb = app_button_cb,
 };
 
@@ -162,7 +158,7 @@ void main(void)
 		return;
 	}
 
-/* STEP 10 - Register the authentication callbacks */
+	/* STEP 10 - Register the authentication callbacks */
 	err = bt_conn_auth_cb_register(&conn_auth_callbacks);
 	if (err) {
 		LOG_INF("Failed to register authorization callbacks\n");
@@ -170,7 +166,7 @@ void main(void)
 	}
 
 	bt_conn_cb_register(&connection_callbacks);
-	
+
 	err = bt_enable(NULL);
 	if (err) {
 		LOG_INF("Bluetooth init failed (err %d)\n", err);
@@ -185,8 +181,7 @@ void main(void)
 
 	LOG_INF("Bluetooth initialized\n");
 
-	err = bt_le_adv_start(BT_LE_ADV_CONN, ad, ARRAY_SIZE(ad),
-			      sd, ARRAY_SIZE(sd));
+	err = bt_le_adv_start(BT_LE_ADV_CONN, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
 	if (err) {
 		LOG_INF("Advertising failed to start (err %d)\n", err);
 		return;
