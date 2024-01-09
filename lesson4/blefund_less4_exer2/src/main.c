@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/bluetooth/bluetooth.h>
@@ -14,33 +13,31 @@
 #include <dk_buttons_and_leds.h>
 #include "my_lbs.h"
 
-static struct bt_le_adv_param *adv_param = BT_LE_ADV_PARAM((BT_LE_ADV_OPT_CONNECTABLE|BT_LE_ADV_OPT_USE_IDENTITY), /* Connectable advertising and use identity address */
-                800, /*Min Advertising Interval 500ms (800*0.625ms) */
-                801, /*Max Advertising Interval 500.625ms (801*0.625ms)*/
-                NULL); /* Set to NULL for undirected advertising*/
-
+static struct bt_le_adv_param *adv_param = BT_LE_ADV_PARAM(
+	(BT_LE_ADV_OPT_CONNECTABLE |
+	 BT_LE_ADV_OPT_USE_IDENTITY), /* Connectable advertising and use identity address */
+	800, /* Min Advertising Interval 500ms (800*0.625ms) */
+	801, /* Max Advertising Interval 500.625ms (801*0.625ms) */
+	NULL); /* Set to NULL for undirected advertising */
 
 LOG_MODULE_REGISTER(Lesson4_Exercise2, LOG_LEVEL_INF);
 
-#define DEVICE_NAME             CONFIG_BT_DEVICE_NAME
-#define DEVICE_NAME_LEN         (sizeof(DEVICE_NAME) - 1)
+#define DEVICE_NAME CONFIG_BT_DEVICE_NAME
+#define DEVICE_NAME_LEN (sizeof(DEVICE_NAME) - 1)
 
-#define RUN_STATUS_LED          DK_LED1
-#define CON_STATUS_LED          DK_LED2
-#define USER_LED                DK_LED3
-#define USER_BUTTON             DK_BTN1_MSK
-
+#define RUN_STATUS_LED DK_LED1
+#define CON_STATUS_LED DK_LED2
+#define USER_LED DK_LED3
+#define USER_BUTTON DK_BTN1_MSK
 
 #define STACKSIZE 1024
 #define PRIORITY 7
 
-
-#define RUN_LED_BLINK_INTERVAL  1000
+#define RUN_LED_BLINK_INTERVAL 1000
 /* STEP 17 - Define the interval at which you want to send data at */
 
 static bool app_button_state;
 /* STEP 15 - Define the data you want to stream over Bluetooth LE */
-
 
 static bool app_button_state;
 
@@ -68,9 +65,8 @@ static bool app_button_cb(void)
 
 /* STEP 18.1 - Define the thread function  */
 
-
 static struct my_lbs_cb app_callbacks = {
-	.led_cb    = app_led_cb,
+	.led_cb = app_led_cb,
 	.button_cb = app_button_cb,
 };
 
@@ -78,8 +74,8 @@ static void button_changed(uint32_t button_state, uint32_t has_changed)
 {
 	if (has_changed & USER_BUTTON) {
 		uint32_t user_button_state = button_state & USER_BUTTON;
-		/*STEP 6 - Send indication on a button press*/ 
-		
+		/* STEP 6 - Send indication on a button press */
+
 		app_button_state = user_button_state ? true : false;
 	}
 }
@@ -103,8 +99,8 @@ static void on_disconnected(struct bt_conn *conn, uint8_t reason)
 }
 
 struct bt_conn_cb connection_callbacks = {
-    .connected              = on_connected,
-    .disconnected           = on_disconnected,  
+	.connected = on_connected,
+	.disconnected = on_disconnected,
 };
 
 static int init_button(void)
@@ -143,7 +139,7 @@ void main(void)
 		LOG_ERR("Bluetooth init failed (err %d)\n", err);
 		return;
 	}
-    bt_conn_cb_register(&connection_callbacks);
+	bt_conn_cb_register(&connection_callbacks);
 
 	err = my_lbs_init(&app_callbacks);
 	if (err) {
@@ -151,8 +147,7 @@ void main(void)
 		return;
 	}
 	LOG_INF("Bluetooth initialized\n");
-	err = bt_le_adv_start(adv_param, ad, ARRAY_SIZE(ad),
-			      sd, ARRAY_SIZE(sd));
+	err = bt_le_adv_start(adv_param, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
 	if (err) {
 		LOG_ERR("Advertising failed to start (err %d)\n", err);
 		return;

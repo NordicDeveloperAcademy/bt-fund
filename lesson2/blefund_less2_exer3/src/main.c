@@ -4,33 +4,28 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/gap.h>
-/*STEP 3.2.1 - Include the header file of the UUID helper macros and definitions */
+/* STEP 3.2.1 - Include the header file of the UUID helper macros and definitions */
 
-/*STEP 4.1 - Include the header file for managing Bluetooth LE addresses */
+/* STEP 4.1 - Include the header file for managing Bluetooth LE addresses */
 
 #include <dk_buttons_and_leds.h>
 
-
 /* STEP 5.1 - Create the advertising parameter for connectable advertising */
-
-
 
 LOG_MODULE_REGISTER(Lesson2_Exercise3, LOG_LEVEL_INF);
 
-#define DEVICE_NAME             CONFIG_BT_DEVICE_NAME
-#define DEVICE_NAME_LEN         (sizeof(DEVICE_NAME) - 1)
+#define DEVICE_NAME CONFIG_BT_DEVICE_NAME
+#define DEVICE_NAME_LEN (sizeof(DEVICE_NAME) - 1)
 
-#define RUN_STATUS_LED          DK_LED1
-#define RUN_LED_BLINK_INTERVAL  1000
+#define RUN_STATUS_LED DK_LED1
+#define RUN_LED_BLINK_INTERVAL 1000
 
 static const struct bt_data ad[] = {
 	/* STEP 3.1 - Set the flags and populate the device name in the advertising packet */
-
 
 };
 
@@ -44,7 +39,7 @@ void main(void)
 	int blink_status = 0;
 	int err;
 
-	LOG_INF("Starting Lesson 2 - Exercise 1 \n");
+	LOG_INF("Starting Lesson 2 - Exercise 3 \n");
 
 	err = dk_leds_init();
 	if (err) {
@@ -54,16 +49,14 @@ void main(void)
 
 	/* STEP 4.2 - Change the random static address */
 
-
 	err = bt_enable(NULL);
 	if (err) {
 		LOG_ERR("Bluetooth init failed (err %d)\n", err);
 		return;
 	}
- 
+
 	LOG_INF("Bluetooth initialized\n");
 	/* STEP 5.2 - Start advertising */
-
 
 	LOG_INF("Advertising successfully started\n");
 

@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/bluetooth/bluetooth.h>
@@ -12,32 +11,32 @@
 #include <zephyr/bluetooth/uuid.h>
 #include <zephyr/bluetooth/conn.h>
 
-
 #include <dk_buttons_and_leds.h>
 /* STEP 7 - Include the header file of MY LBS customer service */
 #include "my_lbs.h"
 
-static struct bt_le_adv_param *adv_param = BT_LE_ADV_PARAM((BT_LE_ADV_OPT_CONNECTABLE|BT_LE_ADV_OPT_USE_IDENTITY), /* Connectable advertising and use identity address */
-                800, /*Min Advertising Interval 500ms (800*0.625ms) */
-                801, /*Max Advertising Interval 500.625ms (801*0.625ms)*/
-                NULL); /* Set to NULL for undirected advertising*/
-
+static struct bt_le_adv_param *adv_param = BT_LE_ADV_PARAM(
+	(BT_LE_ADV_OPT_CONNECTABLE |
+	 BT_LE_ADV_OPT_USE_IDENTITY), /* Connectable advertising and use identity address */
+	800, /* Min Advertising Interval 500ms (800*0.625ms) */
+	801, /* Max Advertising Interval 500.625ms (801*0.625ms) */
+	NULL); /* Set to NULL for undirected advertising */
 
 LOG_MODULE_REGISTER(Lesson4_Exercise1, LOG_LEVEL_INF);
 
-#define DEVICE_NAME             CONFIG_BT_DEVICE_NAME
-#define DEVICE_NAME_LEN         (sizeof(DEVICE_NAME) - 1)
+#define DEVICE_NAME CONFIG_BT_DEVICE_NAME
+#define DEVICE_NAME_LEN (sizeof(DEVICE_NAME) - 1)
 
-#define RUN_STATUS_LED          DK_LED1
-#define CON_STATUS_LED          DK_LED2
+#define RUN_STATUS_LED DK_LED1
+#define CON_STATUS_LED DK_LED2
 
 /* STEP 8.1 - Specify the LED to control */
-#define USER_LED                DK_LED3
+#define USER_LED DK_LED3
 
 /* STEP 9.1 - Specify the button to monitor */
-#define USER_BUTTON             DK_BTN1_MSK
+#define USER_BUTTON DK_BTN1_MSK
 
-#define RUN_LED_BLINK_INTERVAL  1000
+#define RUN_LED_BLINK_INTERVAL 1000
 
 static bool app_button_state;
 
@@ -51,7 +50,7 @@ static const struct bt_data sd[] = {
 	BT_DATA_BYTES(BT_DATA_UUID128_ALL, BT_UUID_LBS_VAL),
 };
 
-/* STEP 8.2 - Define the application callback function for controlling the LED*/
+/* STEP 8.2 - Define the application callback function for controlling the LED */
 static void app_led_cb(bool led_state)
 {
 	dk_set_led(USER_LED, led_state);
@@ -63,9 +62,9 @@ static bool app_button_cb(void)
 	return app_button_state;
 }
 
-/* STEP 10 - Declare a varaible app_callbacks of type my_lbs_cb and initiate its members to the applications call back functions we developed in steps 8.2 and 9.2 .*/
+/* STEP 10 - Declare a varaible app_callbacks of type my_lbs_cb and initiate its members to the applications call back functions we developed in steps 8.2 and 9.2. */
 static struct my_lbs_cb app_callbacks = {
-	.led_cb    = app_led_cb,
+	.led_cb = app_led_cb,
 	.button_cb = app_button_cb,
 };
 
@@ -96,8 +95,8 @@ static void on_disconnected(struct bt_conn *conn, uint8_t reason)
 }
 
 struct bt_conn_cb connection_callbacks = {
-    .connected              = on_connected,
-    .disconnected           = on_disconnected,  
+	.connected = on_connected,
+	.disconnected = on_disconnected,
 };
 
 static int init_button(void)
@@ -136,7 +135,7 @@ void main(void)
 		LOG_ERR("Bluetooth init failed (err %d)\n", err);
 		return;
 	}
-    bt_conn_cb_register(&connection_callbacks);
+	bt_conn_cb_register(&connection_callbacks);
 
 	/* STEP 11 - Pass your application callback functions stored in app_callbacks to the MY LBS service */
 	err = my_lbs_init(&app_callbacks);
@@ -145,8 +144,7 @@ void main(void)
 		return;
 	}
 	LOG_INF("Bluetooth initialized\n");
-	err = bt_le_adv_start(adv_param, ad, ARRAY_SIZE(ad),
-			      sd, ARRAY_SIZE(sd));
+	err = bt_le_adv_start(adv_param, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
 	if (err) {
 		LOG_ERR("Advertising failed to start (err %d)\n", err);
 		return;
