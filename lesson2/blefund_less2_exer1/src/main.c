@@ -24,7 +24,7 @@ LOG_MODULE_REGISTER(Lesson2_Exercise1, LOG_LEVEL_INF);
 
 /* STEP 4.2.1 - Declare the scan response packet */
 
-void main(void)
+int main(void)
 {
 	int blink_status = 0;
 	int err;
@@ -34,7 +34,7 @@ void main(void)
 	err = dk_leds_init();
 	if (err) {
 		LOG_ERR("LEDs init failed (err %d)\n", err);
-		return;
+		return -1;
 	}
 	/* STEP 5 - Enable the Bluetooth LE stack */
 

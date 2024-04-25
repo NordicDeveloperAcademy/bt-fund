@@ -34,7 +34,7 @@ static const struct bt_data sd[] = {
 
 };
 
-void main(void)
+int main(void)
 {
 	int blink_status = 0;
 	int err;
@@ -44,7 +44,7 @@ void main(void)
 	err = dk_leds_init();
 	if (err) {
 		LOG_ERR("LEDs init failed (err %d)\n", err);
-		return;
+		return -1;
 	}
 
 	/* STEP 4.2 - Change the random static address */
@@ -52,7 +52,7 @@ void main(void)
 	err = bt_enable(NULL);
 	if (err) {
 		LOG_ERR("Bluetooth init failed (err %d)\n", err);
-		return;
+		return -1;
 	}
 
 	LOG_INF("Bluetooth initialized\n");

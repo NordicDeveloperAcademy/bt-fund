@@ -154,7 +154,7 @@ static int init_button(void)
 	return err;
 }
 
-void main(void)
+int main(void)
 {
 	int blink_status = 0;
 	int err;
@@ -164,25 +164,25 @@ void main(void)
 	err = dk_leds_init();
 	if (err) {
 		LOG_INF("LEDs init failed (err %d)\n", err);
-		return;
+		return -1;
 	}
 
 	err = init_button();
 	if (err) {
 		LOG_INF("Button init failed (err %d)\n", err);
-		return;
+		return -1;
 	}
 	err = bt_conn_auth_cb_register(&conn_auth_callbacks);
 	if (err) {
 		LOG_INF("Failed to register authorization callbacks.\n");
-		return;
+		return -1;
 	}
 	bt_conn_cb_register(&connection_callbacks);
 
 	err = bt_enable(NULL);
 	if (err) {
 		LOG_INF("Bluetooth init failed (err %d)\n", err);
-		return;
+		return -1;
 	}
 
 	LOG_INF("Bluetooth initialized\n");
@@ -192,7 +192,7 @@ void main(void)
 	err = bt_lbs_init(&lbs_callbacs);
 	if (err) {
 		LOG_INF("Failed to init LBS (err:%d)\n", err);
-		return;
+		return -1;
 	}
 	/* STEP 3.4.2 - Start advertising with the Accept List */
 
@@ -200,7 +200,7 @@ void main(void)
 	err = bt_le_adv_start(BT_LE_ADV_CONN, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
 	if (err) {
 		LOG_INF("Advertising failed to start (err %d)\n", err);
-		return;
+		return -1;
 	}
 
 	LOG_INF("Advertising successfully started\n");

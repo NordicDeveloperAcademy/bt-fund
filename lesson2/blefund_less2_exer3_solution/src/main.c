@@ -44,7 +44,7 @@ static const struct bt_data sd[] = {
 		      BT_UUID_128_ENCODE(0x00001523, 0x1212, 0xefde, 0x1523, 0x785feabcd123)),
 };
 
-void main(void)
+int main(void)
 {
 	int blink_status = 0;
 	int err;
@@ -54,7 +54,7 @@ void main(void)
 	err = dk_leds_init();
 	if (err) {
 		LOG_ERR("LEDs init failed (err %d)\n", err);
-		return;
+		return -1;
 	}
 
 	/* STEP 4.2 - Change the random static address */
@@ -72,7 +72,7 @@ void main(void)
 	err = bt_enable(NULL);
 	if (err) {
 		LOG_ERR("Bluetooth init failed (err %d)\n", err);
-		return;
+		return -1;
 	}
 
 	LOG_INF("Bluetooth initialized\n");
@@ -80,7 +80,7 @@ void main(void)
 	err = bt_le_adv_start(adv_param, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
 	if (err) {
 		LOG_ERR("Advertising failed to start (err %d)\n", err);
-		return;
+		return -1;
 	}
 
 	LOG_INF("Advertising successfully started\n");
