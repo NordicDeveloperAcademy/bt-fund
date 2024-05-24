@@ -26,7 +26,6 @@
 
 LOG_MODULE_DECLARE(Lesson4_Exercise2);
 
-static bool notify_enabled;
 static bool notify_mysensor_enabled;
 static bool indicate_enabled;
 static bool button_state;
