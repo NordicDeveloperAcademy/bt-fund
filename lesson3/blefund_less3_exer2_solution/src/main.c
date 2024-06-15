@@ -15,6 +15,7 @@
 #include <bluetooth/services/lbs.h>
 
 #include <dk_buttons_and_leds.h>
+#define REQUEST_CONFIG_TIMEOUT K_MSEC(1000)
 
 static struct bt_le_adv_param *adv_param = BT_LE_ADV_PARAM(
 	(BT_LE_ADV_OPT_CONNECTABLE |
@@ -25,6 +26,7 @@ static struct bt_le_adv_param *adv_param = BT_LE_ADV_PARAM(
 
 LOG_MODULE_REGISTER(Lesson3_Exercise2, LOG_LEVEL_INF);
 struct bt_conn *my_conn = NULL;
+static K_SEM_DEFINE(request_sem, 0, 1);
 
 /* STEP 11.2 - Create variable that holds callback for MTU negotiation */
 static struct bt_gatt_exchange_params exchange_params;
@@ -60,6 +62,7 @@ static void update_phy(struct bt_conn *conn)
 		.pref_rx_phy = BT_GAP_LE_PHY_2M,
 		.pref_tx_phy = BT_GAP_LE_PHY_2M,
 	};
+	k_sem_take(&request_sem, REQUEST_CONFIG_TIMEOUT);
 	err = bt_conn_le_phy_update(conn, &preferred_phy);
 	if (err) {
 		LOG_ERR("bt_conn_le_phy_update() returned %d", err);
@@ -74,6 +77,7 @@ static void update_data_length(struct bt_conn *conn)
 		.tx_max_len = BT_GAP_DATA_LEN_MAX,
 		.tx_max_time = BT_GAP_DATA_TIME_MAX,
 	};
+	k_sem_take(&request_sem, REQUEST_CONFIG_TIMEOUT);
 	err = bt_conn_le_data_len_update(my_conn, &my_data_len);
 	if (err) {
 		LOG_ERR("data_len_update failed (err %d)", err);
@@ -85,7 +89,7 @@ static void update_mtu(struct bt_conn *conn)
 {
 	int err;
 	exchange_params.func = exchange_func;
-
+	k_sem_take(&request_sem, REQUEST_CONFIG_TIMEOUT);
 	err = bt_gatt_exchange_mtu(conn, &exchange_params);
 	if (err) {
 		LOG_ERR("bt_gatt_exchange_mtu failed (err %d)", err);
@@ -139,6 +143,7 @@ void on_le_param_updated(struct bt_conn *conn, uint16_t interval, uint16_t laten
 	uint16_t supervision_timeout = timeout * 10; // in ms
 	LOG_INF("Connection parameters updated: interval %.2f ms, latency %d intervals, timeout %d ms",
 		connection_interval, latency, supervision_timeout);
+	k_sem_give(&request_sem);
 }
 
 /* STEP 8.1 - Write a callback function to inform about updates in the PHY */
@@ -152,6 +157,7 @@ void on_le_phy_updated(struct bt_conn *conn, struct bt_conn_le_phy_info *param)
 	} else if (param->tx_phy == BT_CONN_LE_TX_POWER_PHY_CODED_S8) {
 		LOG_INF("PHY updated. New PHY: Long Range");
 	}
+	k_sem_give(&request_sem);
 }
 /* STEP 13.1 - Write a callback function to inform about updates in data length */
 void on_le_data_len_updated(struct bt_conn *conn, struct bt_conn_le_data_len_info *info)
@@ -162,6 +168,7 @@ void on_le_data_len_updated(struct bt_conn *conn, struct bt_conn_le_data_len_inf
 	uint16_t rx_time = info->rx_max_time;
 	LOG_INF("Data length updated. Length %d/%d bytes, time %d/%d us", tx_len, rx_len, tx_time,
 		rx_time);
+	k_sem_give(&request_sem);
 }
 
 struct bt_conn_cb connection_callbacks = {
