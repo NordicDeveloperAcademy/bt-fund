@@ -9,6 +9,7 @@ Upon completion of the course, participants will have a thorough understanding o
 Additionally, participants will have gained practical experience in configuring Bluetooth LE advertisements and connections, as well as insight into securing Bluetooth LE connections and inspecting packets over the air using nRF Sniffer.
 
 The course supports the following hardware:
+-  [nRF54L15 DK](https://docs.nordicsemi.com/bundle/ncs-latest/page/zephyr/boards/nordic/nrf54l15dk/doc/index.html) - On nRF Connect SDK v2.8.0 and above
  - [nRF5340 DK](https://www.nordicsemi.com/Software-and-tools/Development-Kits/nRF5340-DK) 
  - [nRF52840 DK](https://www.nordicsemi.com/Software-and-tools/Development-Kits/nRF52840-DK)
  - [nRF52833 DK](https://www.nordicsemi.com/Software-and-tools/Development-Kits/nRF52833-DK)
