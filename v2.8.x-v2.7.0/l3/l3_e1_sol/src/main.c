@@ -21,12 +21,12 @@
 #define USER_BUTTON DK_BTN1_MSK
 #define RUN_STATUS_LED DK_LED1
 /* STEP 3.1 - Define an LED to show the connection status */
-#define CONNECTION_STATUS_LED DK_LED2
+#define CONNECTION_STATUS_LED   DK_LED2
 #define RUN_LED_BLINK_INTERVAL 1000
 
 struct bt_conn *my_conn = NULL;
 
-static struct bt_le_adv_param *adv_param = BT_LE_ADV_PARAM(
+static const struct bt_le_adv_param *adv_param = BT_LE_ADV_PARAM(
 	(BT_LE_ADV_OPT_CONNECTABLE |
 	 BT_LE_ADV_OPT_USE_IDENTITY), /* Connectable advertising and use identity address */
 	BT_GAP_ADV_FAST_INT_MIN_1, /* 0x30 units, 48 units, 30ms */
@@ -73,31 +73,33 @@ void on_disconnected(struct bt_conn *conn, uint8_t reason)
 
 /* STEP 2.1 - Declare the connection_callback structure */
 struct bt_conn_cb connection_callbacks = {
-	.connected = on_connected,
-	.disconnected = on_disconnected,
+	.connected              = on_connected,
+	.disconnected           = on_disconnected,
 };
 
 /* STEP 8.3 - Send a notification using the LBS characteristic. */
 static void button_changed(uint32_t button_state, uint32_t has_changed)
 {
 	int err;
-	if (has_changed & USER_BUTTON) {
-		LOG_INF("Button changed");
+	bool user_button_changed = (has_changed & USER_BUTTON) ? true : false;
+	bool user_button_pressed = (button_state & USER_BUTTON) ? true : false;
+	if (user_button_changed) {
+		LOG_INF("Button %s", (user_button_pressed ? "pressed" : "released"));
 
-		err = bt_lbs_send_button_state(button_state ? true : false);
+		err = bt_lbs_send_button_state(user_button_pressed);
 		if (err) {
-			LOG_ERR("Couldn't send notification. err: %d", err);
+			LOG_ERR("Couldn't send notification. (err: %d)", err);
 		}
 	}
 }
 
 static int init_button(void)
 {
-	int err;
+	int err = 0;
 	/* STEP 8.4 - Complete the implementation of the init_button() function. */
 	err = dk_buttons_init(button_changed);
 	if (err) {
-		LOG_INF("Cannot init buttons (err: %d)", err);
+		LOG_ERR("Cannot init buttons (err: %d)", err);
 	}
 
 	return err;
@@ -118,12 +120,15 @@ int main(void)
 
 	err = init_button();
 	if (err) {
-		LOG_INF("Button init failed (err %d)", err);
+		LOG_ERR("Button init failed (err %d)", err);
 		return -1;
 	}
 
 	/* STEP 2.3 - Register our custom callbacks */
-	bt_conn_cb_register(&connection_callbacks);
+	err = bt_conn_cb_register(&connection_callbacks);
+	if (err) {
+		LOG_ERR("Connection callback register failed (err %d)", err);
+    }
 
 	err = bt_enable(NULL);
 	if (err) {
