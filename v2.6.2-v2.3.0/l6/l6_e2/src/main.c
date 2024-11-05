@@ -23,7 +23,7 @@ static struct bt_le_adv_param *adv_param = BT_LE_ADV_PARAM(
 	BT_GAP_ADV_FAST_INT_MAX_1, /* 0x60 units, 96 units, 60ms */
 	NULL); /* Set to NULL for undirected advertising */
 
-LOG_MODULE_REGISTER(Lesson3_Exercise2, LOG_LEVEL_INF);
+LOG_MODULE_REGISTER(Lesson6_Exercise2, LOG_LEVEL_INF);
 struct bt_conn *my_conn = NULL;
 
 static struct bt_gatt_exchange_params exchange_params;
@@ -97,12 +97,14 @@ void on_connected(struct bt_conn *conn, uint8_t err)
 	LOG_INF("Connected");
 	my_conn = bt_conn_ref(conn);
 	dk_set_led(CONNECTION_STATUS_LED, 1);
+
 	struct bt_conn_info info;
 	err = bt_conn_get_info(conn, &info);
 	if (err) {
 		LOG_ERR("bt_conn_get_info() returned %d", err);
 		return;
 	}
+
 	double connection_interval = info.le.interval * 1.25; // in ms
 	uint16_t supervision_timeout = info.le.timeout * 10; // in ms
 	LOG_INF("Connection parameters: interval %.2f ms, latency %d intervals, timeout %d ms",
@@ -140,7 +142,6 @@ void on_le_phy_updated(struct bt_conn *conn, struct bt_conn_le_phy_info *param)
 		LOG_INF("PHY updated. New PHY: Long Range");
 	}
 }
-
 void on_le_data_len_updated(struct bt_conn *conn, struct bt_conn_le_data_len_info *info)
 {
 	uint16_t tx_len = info->tx_max_len;
@@ -213,18 +214,19 @@ int main(void)
 		return -1;
 	}
 
+	bt_conn_cb_register(&connection_callbacks);
+
 	err = bt_enable(NULL);
 	if (err) {
 		LOG_ERR("Bluetooth init failed (err %d)", err);
 		return -1;
 	}
 
-	bt_conn_cb_register(&connection_callbacks);
 	LOG_INF("Bluetooth initialized");
 	err = bt_le_adv_start(adv_param, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
 	if (err) {
 		LOG_ERR("Advertising failed to start (err %d)", err);
-		return -1;
+		return -1 ;
 	}
 
 	LOG_INF("Advertising successfully started");
