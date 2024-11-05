@@ -16,6 +16,13 @@
 
 #include <dk_buttons_and_leds.h>
 
+#define USER_BUTTON DK_BTN1_MSK
+#define RUN_STATUS_LED DK_LED1
+#define CONNECTION_STATUS_LED   DK_LED2
+#define RUN_LED_BLINK_INTERVAL 1000
+
+struct bt_conn *my_conn = NULL;
+
 static const struct bt_le_adv_param *adv_param = BT_LE_ADV_PARAM(
 	(BT_LE_ADV_OPT_CONNECTABLE |
 	 BT_LE_ADV_OPT_USE_IDENTITY), /* Connectable advertising and use identity address */
@@ -23,21 +30,14 @@ static const struct bt_le_adv_param *adv_param = BT_LE_ADV_PARAM(
 	BT_GAP_ADV_FAST_INT_MAX_1, /* 0x60 units, 96 units, 60ms */
 	NULL); /* Set to NULL for undirected advertising */
 
-LOG_MODULE_REGISTER(Lesson3_Exercise2, LOG_LEVEL_INF);
-struct bt_conn *my_conn = NULL;
+LOG_MODULE_REGISTER(Lesson6_Exercise2, LOG_LEVEL_INF);
 
 static struct bt_gatt_exchange_params exchange_params;
 
-static void exchange_func(struct bt_conn *conn, uint8_t att_err,
-			  struct bt_gatt_exchange_params *params);
+static void exchange_func(struct bt_conn *conn, uint8_t att_err, struct bt_gatt_exchange_params *params);
 
 #define DEVICE_NAME CONFIG_BT_DEVICE_NAME
 #define DEVICE_NAME_LEN (sizeof(DEVICE_NAME) - 1)
-
-#define USER_BUTTON DK_BTN1_MSK
-#define RUN_STATUS_LED DK_LED1
-#define CONNECTION_STATUS_LED DK_LED2
-#define RUN_LED_BLINK_INTERVAL 1000
 
 static const struct bt_data ad[] = {
 	BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
@@ -87,6 +87,7 @@ static void update_mtu(struct bt_conn *conn)
 	}
 }
 
+
 /* Callbacks */
 void on_connected(struct bt_conn *conn, uint8_t err)
 {
@@ -103,11 +104,9 @@ void on_connected(struct bt_conn *conn, uint8_t err)
 		LOG_ERR("bt_conn_get_info() returned %d", err);
 		return;
 	}
-	double connection_interval = info.le.interval * 1.25; // in ms
-	uint16_t supervision_timeout = info.le.timeout * 10; // in ms
-	LOG_INF("Connection parameters: interval %.2f ms, latency %d intervals, timeout %d ms",
-		connection_interval, info.le.latency, supervision_timeout);
-
+	double connection_interval = info.le.interval*1.25; // in ms
+	uint16_t supervision_timeout = info.le.timeout*10; // in ms
+	LOG_INF("Connection parameters: interval %.2f ms, latency %d intervals, timeout %d ms", connection_interval, info.le.latency, supervision_timeout);
 	update_phy(my_conn);
 	update_data_length(my_conn);
 	update_mtu(my_conn);
@@ -120,43 +119,41 @@ void on_disconnected(struct bt_conn *conn, uint8_t reason)
 	bt_conn_unref(my_conn);
 }
 
-void on_le_param_updated(struct bt_conn *conn, uint16_t interval, uint16_t latency,
-			 uint16_t timeout)
+void on_le_param_updated(struct bt_conn *conn, uint16_t interval, uint16_t latency, uint16_t timeout)
 {
-	double connection_interval = interval * 1.25; // in ms
-	uint16_t supervision_timeout = timeout * 10; // in ms
-	LOG_INF("Connection parameters updated: interval %.2f ms, latency %d intervals, timeout %d ms",
-		connection_interval, latency, supervision_timeout);
+	double connection_interval = interval*1.25;         // in ms
+	uint16_t supervision_timeout = timeout*10;          // in ms
+	LOG_INF("Connection parameters updated: interval %.2f ms, latency %d intervals, timeout %d ms", connection_interval, latency, supervision_timeout);
 }
-
 void on_le_phy_updated(struct bt_conn *conn, struct bt_conn_le_phy_info *param)
 {
 	// PHY Updated
 	if (param->tx_phy == BT_CONN_LE_TX_POWER_PHY_1M) {
 		LOG_INF("PHY updated. New PHY: 1M");
-	} else if (param->tx_phy == BT_CONN_LE_TX_POWER_PHY_2M) {
+	}
+	else if (param->tx_phy == BT_CONN_LE_TX_POWER_PHY_2M) {
 		LOG_INF("PHY updated. New PHY: 2M");
-	} else if (param->tx_phy == BT_CONN_LE_TX_POWER_PHY_CODED_S8) {
+	}
+	else if (param->tx_phy == BT_CONN_LE_TX_POWER_PHY_CODED_S8) {
 		LOG_INF("PHY updated. New PHY: Long Range");
 	}
 }
 
 void on_le_data_len_updated(struct bt_conn *conn, struct bt_conn_le_data_len_info *info)
 {
-	uint16_t tx_len = info->tx_max_len;
-	uint16_t tx_time = info->tx_max_time;
-	uint16_t rx_len = info->rx_max_len;
-	uint16_t rx_time = info->rx_max_time;
-	LOG_INF("Data length updated. Length %d/%d bytes, time %d/%d us", tx_len, rx_len, tx_time,
-		rx_time);
+	uint16_t tx_len     = info->tx_max_len; 
+	uint16_t tx_time    = info->tx_max_time;
+	uint16_t rx_len     = info->rx_max_len;
+	uint16_t rx_time    = info->rx_max_time;
+	LOG_INF("Data length updated. Length %d/%d bytes, time %d/%d us", tx_len, rx_len, tx_time, rx_time);
 }
 
 struct bt_conn_cb connection_callbacks = {
-	.connected = on_connected,
-	.disconnected = on_disconnected,
-	.le_param_updated = on_le_param_updated,
-	.le_phy_updated = on_le_phy_updated,
-	.le_data_len_updated = on_le_data_len_updated,
+	.connected          = on_connected,
+	.disconnected       = on_disconnected,
+	.le_param_updated   = on_le_param_updated,
+	.le_phy_updated     = on_le_phy_updated,
+	.le_data_len_updated    = on_le_data_len_updated,
 };
 
 static void exchange_func(struct bt_conn *conn, uint8_t att_err,
@@ -164,8 +161,7 @@ static void exchange_func(struct bt_conn *conn, uint8_t att_err,
 {
 	LOG_INF("MTU exchange %s", att_err == 0 ? "successful" : "failed");
 	if (!att_err) {
-		uint16_t payload_mtu =
-			bt_gatt_get_mtu(conn) - 3; // 3 bytes used for Attribute headers.
+		uint16_t payload_mtu = bt_gatt_get_mtu(conn) - 3;   // 3 bytes used for Attribute headers.
 		LOG_INF("New MTU: %d bytes", payload_mtu);
 	}
 }
@@ -173,11 +169,14 @@ static void exchange_func(struct bt_conn *conn, uint8_t att_err,
 static void button_changed(uint32_t button_state, uint32_t has_changed)
 {
 	int err;
-	if (has_changed & USER_BUTTON) {
-		LOG_INF("Button changed");
-		err = bt_lbs_send_button_state(button_state ? true : false);
+	bool user_button_changed = (has_changed & USER_BUTTON) ? true : false;
+	bool user_button_pressed = (button_state & USER_BUTTON) ? true : false;
+	if (user_button_changed) {
+		LOG_INF("Button %s", (user_button_pressed ? "pressed" : "released"));
+
+		err = bt_lbs_send_button_state(user_button_pressed);
 		if (err) {
-			LOG_ERR("Couldn't send notification. err: %d", err);
+			LOG_ERR("Couldn't send notification. (err: %d)", err);
 		}
 	}
 }
@@ -188,7 +187,7 @@ static int init_button(void)
 
 	err = dk_buttons_init(button_changed);
 	if (err) {
-		LOG_INF("Cannot init buttons (err: %d)", err);
+		LOG_ERR("Cannot init buttons (err: %d)", err);
 	}
 
 	return err;
@@ -213,13 +212,17 @@ int main(void)
 		return -1;
 	}
 
+	err = bt_conn_cb_register(&connection_callbacks);
+    if (err) {
+        LOG_ERR("Connection callback register failed (err %d)", err);
+    }
+
 	err = bt_enable(NULL);
 	if (err) {
 		LOG_ERR("Bluetooth init failed (err %d)", err);
 		return -1;
 	}
 
-	bt_conn_cb_register(&connection_callbacks);
 	LOG_INF("Bluetooth initialized");
 	err = bt_le_adv_start(adv_param, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
 	if (err) {
