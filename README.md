@@ -10,7 +10,7 @@ Additionally, participants will have gained practical experience in configuring 
 
 This repository contains the exercise code base and solutions. Make sure to select the directory that corresponds with the nRF Connect SDK version of your choosing:
 <ul>
-    <li><code>v2.8.x-v2.7.0</code>: For nRF Connect SDK versions v2.8.x to v2.7.0 </li> 
+    <li><code>v2.9.0-v2.7.0</code>: For nRF Connect SDK versions v2.9.0 to v2.7.0 </li> 
     <li><code>v2.6.2-v2.3.0</code>: For nRF Connect SDK versions v2.6.2 to v2.3.0 </li> 
 </ul>
 
