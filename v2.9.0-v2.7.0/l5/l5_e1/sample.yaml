@@ -1,5 +1,5 @@
 sample:
-  name: Bluetooth Low Energy Fundamentals Course - Lesson 4 Exercise 3 
+  name: Bluetooth Low Energy Fundamentals Course - Lesson 5 Exercise 1 
   
 common: 
     sysbuild: true
@@ -17,4 +17,4 @@ common:
       - native_sim
     
 tests:
-  l4.e3: {}
+  l5.e1: {}

@@ -1,10 +1,9 @@
 sample:
-  name: Bluetooth Low Energy Fundamentals Course - Lesson 4 Exercise 3 
+  name: Bluetooth Low Energy Fundamentals Course - Lesson 4 Exercise 1 Solution
   
 common: 
     sysbuild: true
     build_only: true
-    skip: true
     integration_platforms: 
       - nrf52dk/nrf52832
       - nrf52833dk/nrf52833
@@ -17,4 +16,4 @@ common:
       - native_sim
     
 tests:
-  l4.e3: {}
+  l4.e1_sol: {}
