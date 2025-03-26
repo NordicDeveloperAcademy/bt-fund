@@ -8,8 +8,9 @@ Upon completion of the course, participants will have a thorough understanding o
 
 Additionally, participants will have gained practical experience in configuring Bluetooth LE advertisements and connections, as well as insight into securing Bluetooth LE connections and inspecting packets over the air using nRF Sniffer.
 
-This repository contains the exercise code base and solutions. Make sure to select the directory that corresponds with the nRF Connect SDK version of your choosing:
+This repository contains the exercise code base and solutions. Make sure to select the branch that corresponds with the nRF Connect SDK version of your choosing:
 <ul>
+    <li><code>main</code>: For nRF Connect SDK versions v3.0.0 </li> 
     <li><code>v2.9.0-v2.7.0</code>: For nRF Connect SDK versions v2.9.0 to v2.7.0 </li> 
     <li><code>v2.6.2-v2.3.0</code>: For nRF Connect SDK versions v2.6.2 to v2.3.0 </li> 
 </ul>
