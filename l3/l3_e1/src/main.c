@@ -26,7 +26,7 @@
 struct bt_conn *my_conn = NULL;
 
 static const struct bt_le_adv_param *adv_param = BT_LE_ADV_PARAM(
-	(BT_LE_ADV_OPT_CONNECTABLE |
+	(BT_LE_ADV_OPT_CONN |
 	 BT_LE_ADV_OPT_USE_IDENTITY), /* Connectable advertising and use identity address */
 	BT_GAP_ADV_FAST_INT_MIN_1, /* 0x30 units, 48 units, 30ms */
 	BT_GAP_ADV_FAST_INT_MAX_1, /* 0x60 units, 96 units, 60ms */
