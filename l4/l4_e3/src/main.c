@@ -59,6 +59,7 @@ static K_SEM_DEFINE(ble_init_ok, 0, 1);
 
 static struct bt_conn *current_conn;
 static struct bt_conn *auth_conn;
+static struct k_work adv_work;
 
 static const struct device *uart = DEVICE_DT_GET(DT_CHOSEN(nordic_nus_uart));
 static struct k_work_delayable uart_work;
@@ -320,6 +321,23 @@ static int uart_init(void)
 	return err;
 }
 
+static void adv_work_handler(struct k_work *work)
+{
+	int err = bt_le_adv_start(BT_LE_ADV_CONN_FAST_2, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
+
+	if (err) {
+		printk("Advertising failed to start (err %d)\n", err);
+		return;
+	}
+
+	printk("Advertising successfully started\n");
+}
+
+static void advertising_start(void)
+{
+	k_work_submit(&adv_work);
+}
+
 static void connected(struct bt_conn *conn, uint8_t err)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
@@ -357,6 +375,12 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 	}
 }
 
+static void recycled_cb(void)
+{
+	printk("Connection object available from previous conn. Disconnect is complete!\n");
+	advertising_start();
+}
+
 #ifdef CONFIG_BT_NUS_SECURITY_ENABLED
 static void security_changed(struct bt_conn *conn, bt_security_t level, enum bt_security_err err)
 {
@@ -375,6 +399,7 @@ static void security_changed(struct bt_conn *conn, bt_security_t level, enum bt_
 BT_CONN_CB_DEFINE(conn_callbacks) = {
 	.connected = connected,
 	.disconnected = disconnected,
+	.recycled = recycled_cb,
 #ifdef CONFIG_BT_NUS_SECURITY_ENABLED
 	.security_changed = security_changed,
 #endif
@@ -583,11 +608,8 @@ int main(void)
 	}
 	/* STEP 8.2 - Pass your application callback function to the NUS service */
 
-	err = bt_le_adv_start(BT_LE_ADV_CONN_FAST_2, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
-	if (err) {
-		LOG_ERR("Advertising failed to start (err %d)", err);
-		return 0;
-	}
+	k_work_init(&adv_work, adv_work_handler);
+	advertising_start();
 
 	for (;;) {
 		dk_set_led(RUN_STATUS_LED, (++blink_status) % 2);
