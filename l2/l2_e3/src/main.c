@@ -7,6 +7,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/conn.h>
 #include <zephyr/bluetooth/gap.h>
 /* STEP 3.2.1 - Include the header file of the UUID helper macros and definitions */
 
@@ -23,7 +24,7 @@ LOG_MODULE_REGISTER(Lesson2_Exercise3, LOG_LEVEL_INF);
 
 #define RUN_STATUS_LED DK_LED1
 #define RUN_LED_BLINK_INTERVAL 1000
-
+static struct k_work adv_work;
 static const struct bt_data ad[] = {
 	/* STEP 3.1 - Set the flags and populate the device name in the advertising packet */
 
@@ -33,6 +34,7 @@ static const struct bt_data sd[] = {
 	/* STEP 3.2.2 - Include the 16-bytes (128-Bits) UUID of the LBS service in the scan response packet */
 
 };
+/* STEP 5.2 - Resume advertising after a disconnection */
 
 int main(void)
 {
@@ -56,7 +58,7 @@ int main(void)
 	}
 
 	LOG_INF("Bluetooth initialized\n");
-	/* STEP 5.2 - Start advertising */
+	/* STEP 5.3 - Start connectable advertising */
 
 	LOG_INF("Advertising successfully started\n");
 

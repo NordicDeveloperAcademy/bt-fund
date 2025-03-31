@@ -7,6 +7,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/conn.h>
 #include <zephyr/bluetooth/gap.h>
 /* STEP 3.2.1 - Include the header file of the UUID helper macros and definitions */
 #include <zephyr/bluetooth/uuid.h>
@@ -30,7 +31,7 @@ LOG_MODULE_REGISTER(Lesson2_Exercise3, LOG_LEVEL_INF);
 
 #define RUN_STATUS_LED DK_LED1
 #define RUN_LED_BLINK_INTERVAL 1000
-
+static struct k_work adv_work;
 static const struct bt_data ad[] = {
 	/* STEP 3.1 - Set the flags and populate the device name in the advertising packet */
 	BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
@@ -42,6 +43,31 @@ static const struct bt_data sd[] = {
 	/* STEP 3.2.2 - Include the 16-bytes (128-Bits) UUID of the LBS service in the scan response packet */
 	BT_DATA_BYTES(BT_DATA_UUID128_ALL,
 		      BT_UUID_128_ENCODE(0x00001523, 0x1212, 0xefde, 0x1523, 0x785feabcd123)),
+};
+/* STEP 5.2 - Resume advertising after a disconnection */
+static void adv_work_handler(struct k_work *work)
+{
+	int err = bt_le_adv_start(adv_param, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
+
+	if (err) {
+		printk("Advertising failed to start (err %d)\n", err);
+		return;
+	}
+
+	printk("Advertising successfully started\n");
+}
+static void advertising_start(void)
+{
+	k_work_submit(&adv_work);
+}
+static void recycled_cb(void)
+{
+	printk("Connection object available from previous conn. Disconnect is complete!\n");
+	advertising_start();
+}
+
+BT_CONN_CB_DEFINE(conn_callbacks) = {
+	.recycled = recycled_cb,
 };
 
 int main(void)
@@ -76,12 +102,9 @@ int main(void)
 	}
 
 	LOG_INF("Bluetooth initialized\n");
-	/* STEP 5.2 - Start advertising */
-	err = bt_le_adv_start(adv_param, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
-	if (err) {
-		LOG_ERR("Advertising failed to start (err %d)\n", err);
-		return -1;
-	}
+	/* STEP 5.3 - Start connectable advertising */
+	k_work_init(&adv_work, adv_work_handler);
+	advertising_start();
 
 	LOG_INF("Advertising successfully started\n");
 
