@@ -37,6 +37,7 @@ LOG_MODULE_REGISTER(Lesson4_Exercise2, LOG_LEVEL_INF);
 /* STEP 17 - Define the interval at which you want to send data at */
 #define NOTIFY_INTERVAL 500
 static bool app_button_state;
+static struct k_work adv_work;
 /* STEP 15 - Define the data you want to stream over Bluetooth LE */
 static uint32_t app_sensor_value = 100;
 
@@ -50,6 +51,26 @@ static const struct bt_data sd[] = {
 	BT_DATA_BYTES(BT_DATA_UUID128_ALL, BT_UUID_LBS_VAL),
 };
 
+static void adv_work_handler(struct k_work *work)
+{
+	int err = bt_le_adv_start(adv_param, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
+
+	if (err) {
+		printk("Advertising failed to start (err %d)\n", err);
+		return;
+	}
+
+	printk("Advertising successfully started\n");
+}
+static void advertising_start(void)
+{
+	k_work_submit(&adv_work);
+}
+static void recycled_cb(void)
+{
+	printk("Connection object available from previous conn. Disconnect is complete!\n");
+	advertising_start();
+}
 /* STEP 16 - Define a function to simulate the data */
 static void simulate_data(void)
 {
@@ -117,6 +138,7 @@ static void on_disconnected(struct bt_conn *conn, uint8_t reason)
 struct bt_conn_cb connection_callbacks = {
 	.connected = on_connected,
 	.disconnected = on_disconnected,
+	.recycled = recycled_cb,
 };
 
 static int init_button(void)
@@ -163,13 +185,8 @@ int main(void)
 		return -1;
 	}
 	LOG_INF("Bluetooth initialized\n");
-	err = bt_le_adv_start(adv_param, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
-	if (err) {
-		LOG_ERR("Advertising failed to start (err %d)\n", err);
-		return -1;
-	}
-
-	LOG_INF("Advertising successfully started\n");
+	k_work_init(&adv_work, adv_work_handler);
+	advertising_start();
 	for (;;) {
 		dk_set_led(RUN_STATUS_LED, (++blink_status) % 2);
 		k_sleep(K_MSEC(RUN_LED_BLINK_INTERVAL));
