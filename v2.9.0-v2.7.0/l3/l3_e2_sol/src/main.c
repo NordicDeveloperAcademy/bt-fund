@@ -117,6 +117,7 @@ void on_connected(struct bt_conn *conn, uint8_t err)
 	/* STEP 7.2 - Update the PHY mode */
 	update_phy(my_conn);
 	/* STEP 13.5 - Update the data length and MTU */
+    k_sleep(K_MSEC(1000));
 	update_data_length(my_conn);
 	update_mtu(my_conn);
 }
