@@ -22,6 +22,7 @@
 #define RUN_LED_BLINK_INTERVAL 1000
 
 struct bt_conn *my_conn = NULL;
+static struct k_work adv_work;
 
 static const struct bt_le_adv_param *adv_param = BT_LE_ADV_PARAM(
 	(BT_LE_ADV_OPT_CONN |
@@ -46,8 +47,25 @@ static const struct bt_data ad[] = {
 
 static const struct bt_data sd[] = {
 	BT_DATA_BYTES(BT_DATA_UUID128_ALL,
-		      BT_UUID_128_ENCODE(0x00001523, 0x1212, 0xefde, 0x1523, 0x785feabcd123)),
+			  BT_UUID_128_ENCODE(0x00001523, 0x1212, 0xefde, 0x1523, 0x785feabcd123)),
 };
+
+static void adv_work_handler(struct k_work *work)
+{
+	int err = bt_le_adv_start(adv_param, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
+
+	if (err) {
+		LOG_ERR("Advertising failed to start (err %d)", err);
+		return;
+	}
+
+	LOG_INF("Advertising successfully started");
+}
+
+static void advertising_start(void)
+{
+	k_work_submit(&adv_work);
+}
 
 /* STEP 7.1 - Define the function to update the connection's PHY */
 
@@ -81,6 +99,11 @@ void on_disconnected(struct bt_conn *conn, uint8_t reason)
 	bt_conn_unref(my_conn);
 }
 
+void on_recycled(void)
+{
+	advertising_start();
+}
+
 /* STEP 4.2 - Add the callback for connection parameter updates */
 
 /* STEP 8.1 - Write a callback function to inform about updates in the PHY */
@@ -90,6 +113,7 @@ void on_disconnected(struct bt_conn *conn, uint8_t reason)
 struct bt_conn_cb connection_callbacks = {
 	.connected = on_connected,
 	.disconnected = on_disconnected,
+	.recycled = on_recycled,
 	/* STEP 4.1 - Add the callback for connection parameter updates */
 	/* STEP 8.3 - Add the callback for PHY mode updates */
 	/* STEP 13.2 - Add the callback for data length updates */
@@ -144,9 +168,9 @@ int main(void)
 	}
 
 	err = bt_conn_cb_register(&connection_callbacks);
-    if (err) {
-        LOG_ERR("Connection callback register failed (err %d)", err);
-    }
+	if (err) {
+		LOG_ERR("Connection callback register failed (err %d)", err);
+	}
 
 	err = bt_enable(NULL);
 	if (err) {

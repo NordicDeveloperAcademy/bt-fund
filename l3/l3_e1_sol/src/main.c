@@ -25,6 +25,7 @@
 #define RUN_LED_BLINK_INTERVAL 1000
 
 struct bt_conn *my_conn = NULL;
+static struct k_work adv_work;
 
 static const struct bt_le_adv_param *adv_param = BT_LE_ADV_PARAM(
 	(BT_LE_ADV_OPT_CONN |
@@ -45,8 +46,25 @@ static const struct bt_data ad[] = {
 
 static const struct bt_data sd[] = {
 	BT_DATA_BYTES(BT_DATA_UUID128_ALL,
-		      BT_UUID_128_ENCODE(0x00001523, 0x1212, 0xefde, 0x1523, 0x785feabcd123)),
+			  BT_UUID_128_ENCODE(0x00001523, 0x1212, 0xefde, 0x1523, 0x785feabcd123)),
 };
+
+static void adv_work_handler(struct k_work *work)
+{
+	int err = bt_le_adv_start(adv_param, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
+
+	if (err) {
+		LOG_ERR("Advertising failed to start (err %d)", err);
+		return;
+	}
+
+	LOG_INF("Advertising successfully started");
+}
+
+static void advertising_start(void)
+{
+	k_work_submit(&adv_work);
+}
 
 /* STEP 2.2 - Implement the callback functions */
 void on_connected(struct bt_conn *conn, uint8_t err)
@@ -71,10 +89,16 @@ void on_disconnected(struct bt_conn *conn, uint8_t reason)
 	dk_set_led(CONNECTION_STATUS_LED, 0);
 }
 
+void on_recycled(void)
+{
+	advertising_start();
+}
+
 /* STEP 2.1 - Declare the connection_callback structure */
 struct bt_conn_cb connection_callbacks = {
 	.connected              = on_connected,
 	.disconnected           = on_disconnected,
+	.recycled               = on_recycled,
 };
 
 /* STEP 8.3 - Send a notification using the LBS characteristic. */
@@ -128,7 +152,7 @@ int main(void)
 	err = bt_conn_cb_register(&connection_callbacks);
 	if (err) {
 		LOG_ERR("Connection callback register failed (err %d)", err);
-    }
+	}
 
 	err = bt_enable(NULL);
 	if (err) {
@@ -137,11 +161,8 @@ int main(void)
 	}
 
 	LOG_INF("Bluetooth initialized");
-	err = bt_le_adv_start(adv_param, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
-	if (err) {
-		LOG_ERR("Advertising failed to start (err %d)", err);
-		return -1;
-	}
+	k_work_init(&adv_work, adv_work_handler);
+	advertising_start();
 
 	LOG_INF("Advertising successfully started");
 
