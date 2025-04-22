@@ -109,11 +109,7 @@ int main(void)
 	LOG_INF("Bluetooth initialized");
 	k_work_init(&adv_work, adv_work_handler);
 	advertising_start();
-	err = bt_le_adv_start(adv_param, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
-	if (err) {
-		LOG_ERR("Advertising failed to start (err %d)", err);
-		return -1;
-	}
+
 
 	LOG_INF("Advertising successfully started");
 
