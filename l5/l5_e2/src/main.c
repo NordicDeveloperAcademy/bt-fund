@@ -14,7 +14,7 @@
 
 #include "lbs.h"
 
-/* STEP 1.2 - Add the header file for the Settings module */
+
 
 LOG_MODULE_REGISTER(Lesson5_Exercise2, LOG_LEVEL_INF);
 
@@ -29,15 +29,16 @@ LOG_MODULE_REGISTER(Lesson5_Exercise2, LOG_LEVEL_INF);
 
 #define USER_BUTTON DK_BTN1_MSK
 
+/* STEP 1.2 - Add the header file for the Settings module */
+
 /* STEP 2.1 - Add extra button for bond deleting function */
 
-/* STEP 4.2.1 - Add extra button for enablig pairing mode */
-
-/* STEP 3.2.1 - Define advertising parameter for no Accept List */
+/* STEP 4.2.1 - Add extra button for enabling pairing mode */
 
 /* STEP 3.2.2 - Define advertising parameter for when Accept List is used */
 
 static bool app_button_state;
+static struct k_work adv_work;
 
 static const struct bt_data ad[] = {
 	BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
@@ -48,11 +49,35 @@ static const struct bt_data sd[] = {
 	BT_DATA_BYTES(BT_DATA_UUID128_ALL, BT_UUID_LBS_VAL),
 };
 
+
+
 /* STEP 3.3.1 - Define the callback to add addreses to the Accept List */
 
 /* STEP 3.3.2 - Define the function to loop through the bond list */
 
 /* STEP 3.4.1 - Define the function to advertise with the Accept List */
+
+static void adv_work_handler(struct k_work *work)
+{
+	int err;
+/* STEP 4.2.3 Add extra code to advertise without using Accept List when pairing_mode is set to true */
+
+/* STEP 3.4.3 - Remove the original advertising code*/
+	
+	err = bt_le_adv_start(BT_LE_ADV_CONN_FAST_2, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
+	if (err) {
+		LOG_INF("Advertising failed to start (err %d)\n", err);
+		return;
+	}
+	LOG_INF("Advertising successfully started\n");
+/* STEP 3.4.2 - Start advertising with the Accept List */
+	
+}
+
+static void advertising_start(void)
+{
+	k_work_submit(&adv_work);
+}
 
 static void on_connected(struct bt_conn *conn, uint8_t err)
 {
@@ -70,7 +95,12 @@ static void on_disconnected(struct bt_conn *conn, uint8_t reason)
 {
 	LOG_INF("Disconnected (reason %u)\n", reason);
 	dk_set_led_off(CON_STATUS_LED);
-	/* STEP 3.5 - Start advertising with Accept List */
+}
+
+static void recycled_cb(void)
+{
+	LOG_INF("Connection object available from previous conn. Disconnect/stop advertising is completed!\n");
+	advertising_start();
 }
 
 static void on_security_changed(struct bt_conn *conn, bt_security_t level, enum bt_security_err err)
@@ -88,6 +118,7 @@ static void on_security_changed(struct bt_conn *conn, bt_security_t level, enum 
 struct bt_conn_cb connection_callbacks = {
 	.connected = on_connected,
 	.disconnected = on_disconnected,
+	.recycled         = recycled_cb,
 	.security_changed = on_security_changed,
 };
 
@@ -139,7 +170,7 @@ static void button_changed(uint32_t button_state, uint32_t has_changed)
 	}
 	/* STEP 2.2 - Add extra button handling to remove bond information */
 
-	/* STEP 4.2.2 Add extra button handling to advertise without using Accept List */
+	/* STEP 4.2.2 Add extra button handling pairing mode (advertise without using Accept List) */
 }
 
 static int init_button(void)
@@ -197,11 +228,10 @@ int main(void)
 	/* STEP 3.4.2 - Start advertising with the Accept List */
 
 	/* STEP 3.4.3 - Remove the original code that does normal advertising */
-	err = bt_le_adv_start(BT_LE_ADV_CONN, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
-	if (err) {
-		LOG_INF("Advertising failed to start (err %d)\n", err);
-		return -1;
-	}
+
+	k_work_init(&adv_work, adv_work_handler);
+	advertising_start();
+
 
 	LOG_INF("Advertising successfully started\n");
 

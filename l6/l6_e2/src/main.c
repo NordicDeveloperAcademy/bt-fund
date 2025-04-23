@@ -22,15 +22,16 @@
 #define RUN_LED_BLINK_INTERVAL 1000
 
 struct bt_conn *my_conn = NULL;
+static struct k_work adv_work;
 
 static const struct bt_le_adv_param *adv_param = BT_LE_ADV_PARAM(
-	(BT_LE_ADV_OPT_CONN  |
+	(BT_LE_ADV_OPT_CONN |
 	 BT_LE_ADV_OPT_USE_IDENTITY), /* Connectable advertising and use identity address */
 	BT_GAP_ADV_FAST_INT_MIN_1, /* 0x30 units, 48 units, 30ms */
 	BT_GAP_ADV_FAST_INT_MAX_1, /* 0x60 units, 96 units, 60ms */
 	NULL); /* Set to NULL for undirected advertising */
 
-LOG_MODULE_REGISTER(Lesson6_Exercise2, LOG_LEVEL_INF);
+LOG_MODULE_REGISTER(Lesson3_Exercise2, LOG_LEVEL_INF);
 
 static struct bt_gatt_exchange_params exchange_params;
 
@@ -46,8 +47,25 @@ static const struct bt_data ad[] = {
 
 static const struct bt_data sd[] = {
 	BT_DATA_BYTES(BT_DATA_UUID128_ALL,
-		      BT_UUID_128_ENCODE(0x00001523, 0x1212, 0xefde, 0x1523, 0x785feabcd123)),
+			  BT_UUID_128_ENCODE(0x00001523, 0x1212, 0xefde, 0x1523, 0x785feabcd123)),
 };
+
+static void adv_work_handler(struct k_work *work)
+{
+	int err = bt_le_adv_start(adv_param, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
+
+	if (err) {
+		LOG_ERR("Advertising failed to start (err %d)", err);
+		return;
+	}
+
+	LOG_INF("Advertising successfully started");
+}
+
+static void advertising_start(void)
+{
+	k_work_submit(&adv_work);
+}
 
 static void update_phy(struct bt_conn *conn)
 {
@@ -119,6 +137,11 @@ void on_disconnected(struct bt_conn *conn, uint8_t reason)
 	bt_conn_unref(my_conn);
 }
 
+void on_recycled(void)
+{
+	advertising_start();
+}
+
 void on_le_param_updated(struct bt_conn *conn, uint16_t interval, uint16_t latency, uint16_t timeout)
 {
 	double connection_interval = interval*1.25;         // in ms
@@ -151,6 +174,7 @@ void on_le_data_len_updated(struct bt_conn *conn, struct bt_conn_le_data_len_inf
 struct bt_conn_cb connection_callbacks = {
 	.connected          = on_connected,
 	.disconnected       = on_disconnected,
+	.recycled           = on_recycled,
 	.le_param_updated   = on_le_param_updated,
 	.le_phy_updated     = on_le_phy_updated,
 	.le_data_len_updated    = on_le_data_len_updated,
@@ -213,9 +237,9 @@ int main(void)
 	}
 
 	err = bt_conn_cb_register(&connection_callbacks);
-    if (err) {
-        LOG_ERR("Connection callback register failed (err %d)", err);
-    }
+	if (err) {
+		LOG_ERR("Connection callback register failed (err %d)", err);
+	}
 
 	err = bt_enable(NULL);
 	if (err) {
@@ -224,13 +248,8 @@ int main(void)
 	}
 
 	LOG_INF("Bluetooth initialized");
-	err = bt_le_adv_start(adv_param, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
-	if (err) {
-		LOG_ERR("Advertising failed to start (err %d)", err);
-		return -1;
-	}
-
-	LOG_INF("Advertising successfully started");
+	k_work_init(&adv_work, adv_work_handler);
+	advertising_start();
 
 	for (;;) {
 		dk_set_led(RUN_STATUS_LED, (++blink_status) % 2);
