@@ -16,4 +16,4 @@ common:
       - native_sim
     
 tests:
-  l6.e3_sol: {}
+  bt_fund.l6.e3_sol: {}

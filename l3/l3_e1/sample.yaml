@@ -17,4 +17,4 @@ common:
       - native_sim
     
 tests:
-  l3.e1: {}
+  bt_fund.l3.e1: {}
