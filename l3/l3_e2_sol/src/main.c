@@ -6,7 +6,6 @@
 
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
-#include <ncs_version.h>
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/gap.h>
 #include <zephyr/bluetooth/gatt.h>
@@ -229,15 +228,7 @@ int main(void)
 		return -1;
 	}
 
-	#if NCS_VERSION_NUMBER == 0x20700
 	bt_conn_cb_register(&connection_callbacks);
-    #else /* NCS_VERSION_NUMBER > 0x20700 */ 
-	err = bt_conn_cb_register(&connection_callbacks);
-	if (err) {
-        LOG_ERR("Connection callback register failed (err %d)", err);
-    }
-	#endif
-
 
 	err = bt_enable(NULL);
 	if (err) {
