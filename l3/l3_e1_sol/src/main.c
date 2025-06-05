@@ -125,10 +125,7 @@ int main(void)
 	}
 
 	/* STEP 2.3 - Register our custom callbacks */
-	err = bt_conn_cb_register(&connection_callbacks);
-	if (err) {
-		LOG_ERR("Connection callback register failed (err %d)", err);
-    }
+	bt_conn_cb_register(&connection_callbacks);
 
 	err = bt_enable(NULL);
 	if (err) {

@@ -129,6 +129,7 @@ int main(void)
 
 	/* STEP 10 - Register the authentication callbacks */
 
+	
 	bt_conn_cb_register(&connection_callbacks);
 
 	err = bt_enable(NULL);
