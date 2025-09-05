@@ -116,6 +116,8 @@ void on_connected(struct bt_conn *conn, uint8_t err)
 	LOG_INF("Connected");
 	my_conn = bt_conn_ref(conn);
 	dk_set_led(CONNECTION_STATUS_LED, 1);
+	k_sleep(K_MSEC(100)); 
+	
 	struct bt_conn_info info;
 	err = bt_conn_get_info(conn, &info);
 	if (err) {
