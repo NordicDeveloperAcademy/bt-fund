@@ -114,32 +114,31 @@ static void update_mtu(struct bt_conn *conn)
 /* Callbacks */
 void on_connected(struct bt_conn *conn, uint8_t err)
 {
-    if (err) {
-        LOG_ERR("Connection error %d", err);
-        return;
-    }
-    LOG_INF("Connected");
-    my_conn = bt_conn_ref(conn);
-    dk_set_led(CONNECTION_STATUS_LED, 1);
+	if (err) {
+		LOG_ERR("Connection error %d", err);
+		return;
+	}
+	LOG_INF("Connected");
+	my_conn = bt_conn_ref(conn);
+	dk_set_led(CONNECTION_STATUS_LED, 1);
     k_sleep(K_MSEC(100)); 
     
-    /* STEP 1.1 - Declare a structure to store the connection parameters */
-    struct bt_conn_info info;
-    err = bt_conn_get_info(conn, &info);
-    if (err) {
-        LOG_ERR("bt_conn_get_info() returned %d", err);
-        return;
-    }
-    /* STEP 1.2 - Add the connection parameters to your log */
-    double connection_interval = info.le.interval*1.25; // in ms
-    uint16_t supervision_timeout = info.le.timeout*10; // in ms
-    LOG_INF("Connection parameters: interval %.2f ms, latency %d intervals, timeout %d ms", connection_interval, info.le.latency, supervision_timeout);
-    /* STEP 7.2 - Update the PHY mode */
-    update_phy(my_conn);
-    /* STEP 13.5 - Update the data length and MTU */
-    k_sleep(K_MSEC(1000));  // Delay added to avoid link layer collisions.
-    update_data_length(my_conn);
-    update_mtu(my_conn);
+	/* STEP 1.1 - Declare a structure to store the connection parameters */
+	struct bt_conn_info info;
+	err = bt_conn_get_info(conn, &info);
+	if (err) {
+		LOG_ERR("bt_conn_get_info() returned %d", err);
+		return;
+	}
+	/* STEP 1.2 - Add the connection parameters to your log */
+	double connection_interval = info.le.interval*1.25; // in ms
+	uint16_t supervision_timeout = info.le.timeout*10; // in ms
+	LOG_INF("Connection parameters: interval %.2f ms, latency %d intervals, timeout %d ms", connection_interval, info.le.latency, supervision_timeout);
+	/* STEP 7.2 - Update the PHY mode */
+	update_phy(my_conn);
+	/* STEP 13.5 - Update the data length and MTU */
+	update_data_length(my_conn);
+	update_mtu(my_conn);
 }
 
 void on_disconnected(struct bt_conn *conn, uint8_t reason)
