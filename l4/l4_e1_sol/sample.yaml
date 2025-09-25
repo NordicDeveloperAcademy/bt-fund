@@ -2,7 +2,7 @@ sample:
   name: Bluetooth Low Energy Fundamentals Course - Lesson 4 Exercise 1 Solution
   
 common: 
-    sysbuild: true
+    
     integration_platforms: 
       - nrf52dk/nrf52832
       - nrf52833dk/nrf52833
