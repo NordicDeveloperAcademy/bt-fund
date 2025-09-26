@@ -590,6 +590,7 @@ int main(void)
 	int blink_status = 0;
 	int err = 0;
 
+	printk("Starting Lesson 4 - Exercise 3 \n");
 	configure_gpio();
 	/* STEP 7 - Initialize the UART Peripheral  */
 	err = uart_init();
