@@ -2,7 +2,7 @@ sample:
   name: Bluetooth Low Energy Fundamentals Course - Lesson 4 Exercise 3 
   
 common: 
-    
+    sysbuild: true
     build_only: true
     skip: true
     integration_platforms: 
