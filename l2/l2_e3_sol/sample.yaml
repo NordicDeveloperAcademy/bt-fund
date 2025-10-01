@@ -3,7 +3,6 @@ sample:
   
 common: 
     sysbuild: true
-    build_only: true
     integration_platforms: 
       - nrf52dk/nrf52832
       - nrf52833dk/nrf52833
@@ -22,8 +21,12 @@ common:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54lm20dk/nrf54lm20a/cpuapp
-    platform_exclude:
-      - native_sim
     
 tests:
-  bt_fund.l2.e3_sol: {}
+  bt_fund.l2.e3_sol:
+    harness: console
+    harness_config:
+      type: one_line
+      regex:
+        - "Starting Lesson 2 - Exercise 3"
+    timeout: 15    

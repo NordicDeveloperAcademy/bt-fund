@@ -1,0 +1,13 @@
+name: Call a reusable workflow
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+
+jobs:
+  call-workflow:
+    uses: lubiel-nordic/workflows/.github/workflows/build_all.yml@main
+    with:
+      repo_name: "bt-fund"
+      toolchain: "latest"
