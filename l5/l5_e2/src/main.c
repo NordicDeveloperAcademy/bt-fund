@@ -14,8 +14,6 @@
 
 #include "lbs.h"
 
-
-
 LOG_MODULE_REGISTER(Lesson5_Exercise2, LOG_LEVEL_INF);
 
 #define DEVICE_NAME CONFIG_BT_DEVICE_NAME
@@ -33,9 +31,9 @@ LOG_MODULE_REGISTER(Lesson5_Exercise2, LOG_LEVEL_INF);
 
 /* STEP 2.1 - Add extra button for bond deleting function */
 
-/* STEP 4.2.1 - Add extra button for enabling pairing mode */
+/* STEP 4.2.1 - Add extra button and a static bool variable for enabling pairing mode */
 
-/* STEP 3.2.2 - Define advertising parameter for when Accept List is used */
+/* STEP 3.2 - Define advertising parameter for when Accept List is used */
 
 static bool app_button_state;
 static struct k_work adv_work;
@@ -55,15 +53,13 @@ static const struct bt_data sd[] = {
 
 /* STEP 3.3.2 - Define the function to loop through the bond list */
 
-/* STEP 3.4.1 - Define the function to advertise with the Accept List */
 
 static void adv_work_handler(struct k_work *work)
 {
-	int err;
-/* STEP 4.2.3 Add extra code to advertise without using Accept List when pairing_mode is set to true */
+	int err = 0;
+/* STEP 4.2.3 Advertise without using Accept List when pairing_mode is set to true */
 
-/* STEP 3.4.3 - Remove the original advertising code*/
-	
+/* STEP 3.4.1 - Remove the original advertising code*/
 	err = bt_le_adv_start(BT_LE_ADV_CONN_FAST_2, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
 	if (err) {
 		LOG_INF("Advertising failed to start (err %d)\n", err);
@@ -171,6 +167,7 @@ static void button_changed(uint32_t button_state, uint32_t has_changed)
 	/* STEP 2.2 - Add extra button handling to remove bond information */
 
 	/* STEP 4.2.2 Add extra button handling pairing mode (advertise without using Accept List) */
+
 }
 
 static int init_button(void)
