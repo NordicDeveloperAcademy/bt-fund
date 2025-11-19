@@ -59,7 +59,7 @@ static void adv_work_handler(struct k_work *work)
 	int err = 0;
 /* STEP 4.2.3 Advertise without using Accept List when pairing_mode is set to true */
 
-/* STEP 3.4.1 - Remove the original advertising code*/
+/* STEP 3.4.1 - Remove the original advertising code */
 	err = bt_le_adv_start(BT_LE_ADV_CONN_FAST_2, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
 	if (err) {
 		LOG_INF("Advertising failed to start (err %d)\n", err);
