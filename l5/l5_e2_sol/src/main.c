@@ -285,7 +285,7 @@ int main(void)
 	int blink_status = 0;
 	int err;
 
-	LOG_INF("Starting Lesson 5 - Exercise 2 \n");
+	LOG_INF("Starting Lesson 5 - Exercise 2");
 
 	err = dk_leds_init();
 	if (err) {
@@ -321,8 +321,6 @@ int main(void)
 		LOG_INF("Failed to init LBS (err:%d)\n", err);
 		return -1;
 	}
-
-
 
 	k_work_init(&adv_work, adv_work_handler);
 	advertising_start();

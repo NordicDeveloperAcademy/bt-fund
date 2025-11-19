@@ -49,7 +49,7 @@ static const struct bt_data sd[] = {
 
 
 
-/* STEP 3.3.1 - Define the callback to add addreses to the Accept List */
+/* STEP 3.3.1 - Define the callback to add addresses to the Accept List */
 
 /* STEP 3.3.2 - Define the function to loop through the bond list */
 
@@ -187,7 +187,7 @@ int main(void)
 	int blink_status = 0;
 	int err;
 
-	LOG_INF("Starting Bluetooth Peripheral LBS example\n");
+	LOG_INF("Starting Lesson 5 - Exercise 2");
 
 	err = dk_leds_init();
 	if (err) {
@@ -222,15 +222,9 @@ int main(void)
 		LOG_INF("Failed to init LBS (err:%d)\n", err);
 		return -1;
 	}
-	/* STEP 3.4.2 - Start advertising with the Accept List */
-
-	/* STEP 3.4.3 - Remove the original code that does normal advertising */
 
 	k_work_init(&adv_work, adv_work_handler);
 	advertising_start();
-
-
-	LOG_INF("Advertising successfully started\n");
 
 	for (;;) {
 		dk_set_led(RUN_STATUS_LED, (++blink_status) % 2);
