@@ -97,7 +97,6 @@ static int setup_accept_list(uint8_t local_id)
 	return bond_cnt;
 }
 
-/* STEP 3.4.1 - Define the function to advertise with the Accept List */
 static void adv_work_handler(struct k_work *work)
 {
 	int err = 0;
@@ -119,14 +118,15 @@ static void adv_work_handler(struct k_work *work)
 		LOG_INF("Advertising successfully started\n");
 		return;
 	}
-/* STEP 3.4.1 - Remove the original code that does normal advertising */
-	
+
+/* STEP 3.4.3 - Remove the original advertising code */	
 	//err = bt_le_adv_start(BT_LE_ADV_CONN_FAST_2, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
 	// if (err) {
 	// 	LOG_INF("Advertising failed to start (err %d)\n", err);
 	// 	return;
 	// }
 	//LOG_INF("Advertising successfully started\n");
+
 /* STEP 3.4.2 - Start advertising with the Accept List */
 	int allowed_cnt = setup_accept_list(BT_ID_DEFAULT);
 	if (allowed_cnt < 0) {
@@ -156,8 +156,6 @@ static void advertising_start(void)
 	k_work_submit(&adv_work);
 }
 
-
-
 static void on_connected(struct bt_conn *conn, uint8_t err)
 {
 	if (err) {
@@ -178,10 +176,9 @@ static void on_disconnected(struct bt_conn *conn, uint8_t reason)
 
 static void recycled_cb(void)
 {
-	printk("Connection object available from previous conn. Disconnect/stop advertising is completed!\n");
+	LOG_INF("Connection object available from previous conn. Disconnect/stop advertising is completed!\n");
 	advertising_start();
 }
-
 
 static void on_security_changed(struct bt_conn *conn, bt_security_t level, enum bt_security_err err)
 {
@@ -201,6 +198,7 @@ struct bt_conn_cb connection_callbacks = {
 	.recycled         = recycled_cb,
 	.security_changed = on_security_changed,
 };
+
 static void auth_passkey_display(struct bt_conn *conn, unsigned int passkey)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
@@ -260,7 +258,6 @@ static void button_changed(uint32_t button_state, uint32_t has_changed)
 		}
 	}
 	/* STEP 4.2.2 Add extra button handling pairing mode (advertise without using Accept List) */
-
 	if (has_changed & PAIRING_BUTTON) {
 		uint32_t pairing_button_state = button_state & PAIRING_BUTTON;
 		if (pairing_button_state == 0) {
@@ -292,7 +289,7 @@ int main(void)
 	int blink_status = 0;
 	int err;
 
-	LOG_INF("Starting Lesson 5 - Exercise 2 \n");
+	LOG_INF("Starting Lesson 5 - Exercise 2");
 
 	err = dk_leds_init();
 	if (err) {
@@ -328,8 +325,6 @@ int main(void)
 		LOG_INF("Failed to init LBS (err:%d)\n", err);
 		return -1;
 	}
-
-
 
 	k_work_init(&adv_work, adv_work_handler);
 	advertising_start();
