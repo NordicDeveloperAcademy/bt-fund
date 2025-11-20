@@ -33,9 +33,9 @@ LOG_MODULE_REGISTER(Lesson5_Exercise2, LOG_LEVEL_INF);
 
 /* STEP 2.1 - Add extra button for bond deleting function */
 
-/* STEP 4.2.1 - Add extra button for enabling pairing mode */
+/* STEP 4.2.1 - Add extra button and a static bool variable for enabling pairing mode */
 
-/* STEP 3.2.2 - Define advertising parameter for when Accept List is used */
+/* STEP 3.2 - Define advertising parameter for when Accept List is used */
 
 static bool app_button_state;
 static struct k_work adv_work;
@@ -49,20 +49,17 @@ static const struct bt_data sd[] = {
 	BT_DATA_BYTES(BT_DATA_UUID128_ALL, BT_UUID_LBS_VAL),
 };
 
-
-
 /* STEP 3.3.1 - Define the callback to add addreses to the Accept List */
 
 /* STEP 3.3.2 - Define the function to loop through the bond list */
 
-/* STEP 3.4.1 - Define the function to advertise with the Accept List */
 
 static void adv_work_handler(struct k_work *work)
 {
-	int err;
-/* STEP 4.2.3 Add extra code to advertise without using Accept List when pairing_mode is set to true */
+	int err = 0;
+/* STEP 4.2.3 - Add extra code to advertise without using Accept List when pairing_mode is set to true */
 
-/* STEP 3.4.3 - Remove the original advertising code*/
+/* STEP 3.4.1 - Remove the original advertising code */
 	
 	err = bt_le_adv_start(BT_LE_ADV_CONN_FAST_2, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
 	if (err) {
@@ -190,7 +187,7 @@ int main(void)
 	int blink_status = 0;
 	int err;
 
-	LOG_INF("Starting Bluetooth Peripheral LBS example\n");
+	LOG_INF("Starting Lesson 5 - Exercise 2");
 
 	err = dk_leds_init();
 	if (err) {
@@ -225,15 +222,9 @@ int main(void)
 		LOG_INF("Failed to init LBS (err:%d)\n", err);
 		return -1;
 	}
-	/* STEP 3.4.2 - Start advertising with the Accept List */
-
-	/* STEP 3.4.3 - Remove the original code that does normal advertising */
 
 	k_work_init(&adv_work, adv_work_handler);
 	advertising_start();
-
-
-	LOG_INF("Advertising successfully started\n");
 
 	for (;;) {
 		dk_set_led(RUN_STATUS_LED, (++blink_status) % 2);
