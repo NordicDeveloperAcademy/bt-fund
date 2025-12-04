@@ -131,7 +131,7 @@ void on_connected(struct bt_conn *conn, uint8_t err)
 		return;
 	}
 	/* STEP 1.2 - Add the connection parameters to your log */
-	double connection_interval = info.le.interval*1.25; // in ms
+	double connection_interval = BT_GAP_US_TO_CONN_INTERVAL(info.le.interval_us) *1.25; // in ms
 	uint16_t supervision_timeout = info.le.timeout*10; // in ms
 	LOG_INF("Connection parameters: interval %.2f ms, latency %d intervals, timeout %d ms", connection_interval, info.le.latency, supervision_timeout);
 	/* STEP 7.2 - Update the PHY mode */
