@@ -10,7 +10,7 @@ Additionally, participants will have gained practical experience in configuring 
 
 This repository contains the exercise code base and solutions. Make sure to select the branch that corresponds with the nRF Connect SDK version of your choosing:
 <ul>
-    <li><code>main</code>: For nRF Connect SDK versions v3.1.1 </li> 
+    <li><code>main</code>: For nRF Connect SDK versions v3.2.0 </li> 
 </ul>
 
 
