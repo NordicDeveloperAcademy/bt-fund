@@ -14,8 +14,6 @@
 
 #include "lbs.h"
 
-
-
 LOG_MODULE_REGISTER(Lesson5_Exercise2, LOG_LEVEL_INF);
 
 #define DEVICE_NAME CONFIG_BT_DEVICE_NAME
@@ -56,7 +54,9 @@ static const struct bt_data sd[] = {
 	BT_DATA_BYTES(BT_DATA_UUID128_ALL, BT_UUID_LBS_VAL),
 };
 
-/* STEP 3.3.1 - Define the callback to add addreses to the Accept List */
+
+
+/* STEP 3.3.1 - Define the callback to add addresses to the Accept List */
 static void setup_accept_list_cb(const struct bt_bond_info *info, void *user_data)
 {
 	int *bond_cnt = user_data;
@@ -96,7 +96,7 @@ static int setup_accept_list(uint8_t local_id)
 static void adv_work_handler(struct k_work *work)
 {
 	int err = 0;
-/* STEP 4.2.3 - Add extra code to advertise without using Accept List when pairing_mode is set to true */
+/* STEP 4.2.3 Advertise without using Accept List when pairing_mode is set to true */
 	if (pairing_mode==true) {
 		err = bt_le_filter_accept_list_clear();
 		if (err) {
@@ -114,8 +114,8 @@ static void adv_work_handler(struct k_work *work)
 		LOG_INF("Advertising successfully started\n");
 		return;
 	}
-
 /* STEP 3.4.1 - Remove the original advertising code */
+	
 	//err = bt_le_adv_start(BT_LE_ADV_CONN_FAST_2, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
 	// if (err) {
 	// 	LOG_INF("Advertising failed to start (err %d)\n", err);
