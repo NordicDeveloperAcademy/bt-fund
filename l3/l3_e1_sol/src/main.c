@@ -152,7 +152,6 @@ int main(void)
 	err = bt_conn_cb_register(&connection_callbacks);
 	if (err) {
 		LOG_ERR("Connection callback register failed (err %d)", err);
-		return -1;
 	}
 
 	err = bt_enable(NULL);
