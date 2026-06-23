@@ -12,6 +12,12 @@
 /delete-node/ &tfm_ps_partition;
 /delete-node/ &storage_partition;
 
+/ {
+	chosen {
+		nordic,nus-uart = &uart0;
+	};
+};
+
 &flash0 {
 	partitions {
 		slot0_s_partition: partition@0 {
