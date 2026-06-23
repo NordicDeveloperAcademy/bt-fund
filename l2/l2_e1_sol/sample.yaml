@@ -12,6 +12,7 @@ common:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp/ns
       - nrf54ls05dk/nrf54ls05b/cpuapp
     platform_allow: 
       - nrf52dk/nrf52832
@@ -22,6 +23,7 @@ common:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp/ns
       - nrf54ls05dk/nrf54ls05b/cpuapp
     
 tests:
@@ -30,5 +32,5 @@ tests:
     harness_config:
       type: one_line
       regex:
-        - "Starting Lesson 2 - Exercise 1"
+        - "Advertising successfully started"
     timeout: 15
