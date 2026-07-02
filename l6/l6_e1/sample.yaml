@@ -30,6 +30,6 @@ tests:
     harness_config:
       type: one_line
       regex:
-        - "Starting Lesson 6 - Exercise 1"
+        - "Advertising successfully started"
     timeout: 15  
   
