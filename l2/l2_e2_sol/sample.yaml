@@ -13,6 +13,7 @@ common:
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     platform_allow: 
       - nrf52dk/nrf52832
       - nrf52833dk/nrf52833
@@ -23,6 +24,7 @@ common:
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
     
 tests:
   bt_fund.l2.e2_sol:
